@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="27.0" layoutY="32.0" prefHeight="22.0" prefWidth="50.0" text="Filtro">
+         <font>
+            <Font name="Arial Bold" size="18.0" />
+         </font>
+      </Label>
+      <HBox alignment="CENTER" layoutX="27.0" layoutY="55.0" prefHeight="66.0" prefWidth="660.0" spacing="7.0" style="-fx-border-color: black; -fx-border-style: solid;">
+         <children>
+            <Label text=" Categoria:">
+               <font>
+                  <Font name="Arial" size="13.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="cbBusquedaCategoriaRecursos" prefHeight="26.0" prefWidth="150.0" />
+            <Label text="Descripcion:">
+               <font>
+                  <Font name="Arial" size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtBusquedaRecursos" />
+            <Button fx:id="btnBuscarRecursos" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="33.0" prefWidth="89.0" text="Buscar">
+               <graphic>
+                  <ImageView fitHeight="31.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../iconos/lupaBuscar.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnImprimirRecursos" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="54.0" prefWidth="90.0" text="Imprimir">
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../iconos/pdfImprimir.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+      <Label layoutX="133.0" layoutY="149.0" prefHeight="22.0" prefWidth="82.0" text="Recurso">
+         <font>
+            <Font name="Arial Bold" size="18.0" />
+         </font>
+      </Label>
+      <GridPane layoutX="133.0" layoutY="172.0" prefHeight="142.0" prefWidth="444.0" style="-fx-border-color: black; -fx-border-style: solid;">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="168.39996337890625" minWidth="10.0" prefWidth="72.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="261.2000274658203" minWidth="10.0" prefWidth="257.6" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="68.59998168945313" minHeight="10.0" prefHeight="46.00001220703125" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="89.19998779296876" minHeight="10.0" prefHeight="38.199987792968756" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="85.6" minHeight="10.0" prefHeight="61.60000000000001" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="    ID:">
+               <font>
+                  <Font name="Arial" size="14.0" />
+               </font>
+            </Label>
+            <Label text="    Categoria:" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Arial" size="14.0" />
+               </font>
+            </Label>
+            <Label text="    Descripcion:" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Arial" size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtAgregarIdRecursos" prefWidth="324.0" GridPane.columnIndex="1" />
+            <TextField fx:id="txtAgregarDescripcionRecursos" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ComboBox fx:id="cbAgregarCategoriaRecursos" prefHeight="26.0" prefWidth="364.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
+      <HBox alignment="CENTER" layoutX="133.0" layoutY="314.0" prefHeight="66.0" prefWidth="444.0" spacing="15.0" style="-fx-border-color: black; -fx-border-style: solid;">
+         <children>
+            <Button fx:id="btnGuardarRecursos" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" text="Guardar">
+               <graphic>
+                  <ImageView fitHeight="49.0" fitWidth="49.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../iconos/disqueteGuardar.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnBorrarRecursos" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" text="Borrar">
+               <graphic>
+                  <ImageView fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../iconos/equisRoja.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnLimpiarRecursos" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" text="Limpiar}">
+               <graphic>
+                  <ImageView fitHeight="44.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../iconos/limpiar.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+      <Label layoutX="77.0" layoutY="399.0" prefHeight="22.0" prefWidth="72.0" text="Listado">
+         <font>
+            <Font name="Arial Bold" size="18.0" />
+         </font>
+      </Label>
+      <TableView fx:id="tabRecursos" layoutX="77.0" layoutY="422.0" prefHeight="229.0" prefWidth="561.0">
+        <columns>
+          <TableColumn fx:id="colIdRecursos" prefWidth="114.39999389648438" text="Id" />
+          <TableColumn fx:id="colCategoriaRecursos" prefWidth="202.40003967285156" text="Categoria" />
+            <TableColumn fx:id="colDescripcionRecursos" prefWidth="244.79998779296875" text="Descripcion" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>
