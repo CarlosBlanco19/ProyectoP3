@@ -7,37 +7,37 @@
   <tabs>
     <Tab fx:id="tabReservas" text="Reservas">
       <content>
-        <fx:include source="Reservas.fxml" />
+        <fx:include source="ReservasView.fxml" />
       </content>
     </Tab>
     <Tab fx:id="tabFuncionarios" text="Funcionarios">
       <content>
-          <fx:include source="Funcionarios.fxml" />
+          <fx:include source="FuncionariosView.fxml" />
       </content>
     </Tab>
       <Tab fx:id="tabCategorias" text="Categorias">
          <content>
-             <fx:include source="Categorias.fxml" />
+             <fx:include source="CategoriasView.fxml" />
          </content>
       </Tab>
       <Tab fx:id="tabRecursos" text="Recursos">
          <content>
-             <fx:include source="Recursos.fxml" />
+             <fx:include source="RecursosView.fxml" />
          </content>
       </Tab>
       <Tab fx:id="tabCalendarizacion" text="Calendarizacion">
          <content>
-             <fx:include source="Calendarizacion.fxml" />
+             <fx:include source="CalendarizacionView.fxml" />
          </content>
       </Tab>
       <Tab fx:id="tabActividades" text="Actividades">
          <content>
-             <fx:include source="Actividades.fxml" />
+             <fx:include source="ActividadesView.fxml" />
          </content>
       </Tab>
       <Tab fx:id="tabEstadisticas" text="Estadisticas">
          <content>
-             <fx:include source="Estadisticas.fxml" />
+             <fx:include source="EstadisticasView.fxml" />
          </content>
       </Tab>
   </tabs>
