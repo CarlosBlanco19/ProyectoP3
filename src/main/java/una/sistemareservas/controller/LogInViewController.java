@@ -1,5 +1,7 @@
 package una.sistemareservas.controller;
 
+import una.sistemareservas.model.Usuario;
+import una.sistemareservas.service.UsuarioService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -11,12 +13,10 @@ import una.sistemareservas.utilidades.NavegadorPantallas;
 
 public class LogInViewController {
 
-    //manejo de usurio y contraseña
-    //se cambia cuando se implemente
-    private static final String USUARIO_VALIDO = "admin";
-    private static final String CONTRASEÑA_VALIDA = "1234";
 
     //bandera
+
+    private final UsuarioService usuarioService = new UsuarioService();
 
     public static boolean sesionIniciada = false;
 
@@ -34,10 +34,12 @@ public class LogInViewController {
     }
 
     private void intentarIngresar(ActionEvent evento){
-        String usuario = txtUsuario.getText().trim();
+        String id = txtUsuario.getText().trim();
         String clave = txtClave.getText().trim();
 
-        if(usuario.equals(USUARIO_VALIDO) && clave.equals(CONTRASEÑA_VALIDA)){
+        Usuario usuario =  usuarioService.autenticar(id, clave);
+
+        if(usuario != null){
             sesionIniciada = true;
             NavegadorPantallas.cambiarPantalla(evento, "/ui/MenuPrincipalView.fxml");
         }else{

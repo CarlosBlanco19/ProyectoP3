@@ -1,4 +1,7 @@
 package una.sistemareservas.controller;
+import una.sistemareservas.service.UsuarioService;
+import una.sistemareservas.utilidades.NavegadorPantallas;
+import una.sistemareservas.model.Usuario;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -6,9 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
-import una.sistemareservas.service.UsuarioService;
-import una.sistemareservas.utilidades.NavegadorPantallas;
-import una.sistemareservas.model.Usuario;
+
+
 
 
 public class CambiarClaveViewController {
@@ -34,7 +36,7 @@ public class CambiarClaveViewController {
         String claveNueva = txtClaveNueva.getText().trim();
         String confirmarClave = txtConfirmarClave.getText().trim();
 
-        Usuario usuario = null; //usuarioService.buscarPorID(id);
+        Usuario usuario = usuarioService.buscarID(id);
 
         if(usuario == null){
             lblAvisos.setText("ID no encontrado");
@@ -51,11 +53,11 @@ public class CambiarClaveViewController {
             return;
         }
 
-//       if(usuarioService.cambiarClave(usuario, claveActual, claveNueva)){
-//            NavegadorPantallas.cambiarPantalla(evento, "/ui/LogInView.fxml");
-//       }else{
-//            lblAvisos.setText("Clave actual incorrecta");
-//       }
+       if(usuarioService.cambiarClave(usuario, claveActual, claveNueva)){
+            NavegadorPantallas.cambiarPantalla(evento, "/ui/LogInView.fxml");
+       }else{
+            lblAvisos.setText("Clave actual incorrecta");
+       }
     }
 
 }

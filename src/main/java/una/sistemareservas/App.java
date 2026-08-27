@@ -13,6 +13,9 @@ public class App extends Application {
 
         Parent raiz = FXMLLoader.load(getClass().getResource("/ui/LogInView.fxml"));
 
+        escenarioPrincipal.setTitle("Sistema de Reservas");
+        escenarioPrincipal.setScene(new Scene(raiz));
+        escenarioPrincipal.show();
         }
 
         public static void main(String[] args){ launch(args);}

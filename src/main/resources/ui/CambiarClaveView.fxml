@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="224.0" prefWidth="341.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="224.0" prefWidth="341.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="una.sistemareservas.controller.CambiarClaveViewController">
    <children>
       <Label layoutX="129.0" layoutY="5.0" prefWidth="83.0" text="Cambiar Clave">
          <font>
@@ -48,7 +48,7 @@
             </ImageView>
          </graphic></Button>
       <Label fx:id="lblUsuario" layoutX="83.0" layoutY="38.0" text="ID:" />
-      <TextField fx:id="txtID" layoutX="115.0" layoutY="34.0" prefHeight="26.0" prefWidth="198.0" promptText="Usuario" text="ID" />
+      <TextField fx:id="txtID" layoutX="115.0" layoutY="34.0" prefHeight="26.0" prefWidth="198.0" promptText="Usuario" />
       <Label fx:id="lblAvisos" layoutX="10.0" layoutY="6.0" prefHeight="18.0" prefWidth="108.0" textFill="RED">
          <font>
             <Font size="7.0" />
