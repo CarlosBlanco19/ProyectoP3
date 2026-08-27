@@ -2,9 +2,8 @@
 
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
 
-<TabPane fx:id="tabPaneMenuPrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="671.0" prefWidth="711.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+<TabPane fx:id="tabPaneMenuPrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="715.0" prefWidth="820.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
   <tabs>
     <Tab fx:id="tabReservas" text="Reservas">
       <content>
@@ -13,32 +12,32 @@
     </Tab>
     <Tab fx:id="tabFuncionarios" text="Funcionarios">
       <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          <fx:include source="Funcionarios.fxml" />
       </content>
     </Tab>
       <Tab fx:id="tabCategorias" text="Categorias">
          <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+             <fx:include source="Categorias.fxml" />
          </content>
       </Tab>
       <Tab fx:id="tabRecursos" text="Recursos">
          <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+             <fx:include source="Recursos.fxml" />
          </content>
       </Tab>
       <Tab fx:id="tabCalendarizacion" text="Calendarizacion">
          <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+             <fx:include source="Calendarizacion.fxml" />
          </content>
       </Tab>
       <Tab fx:id="tabActividades" text="Actividades">
          <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+             <fx:include source="Actividades.fxml" />
          </content>
       </Tab>
       <Tab fx:id="tabEstadisticas" text="Estadisticas">
          <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+             <fx:include source="Estadisticas.fxml" />
          </content>
       </Tab>
   </tabs>
