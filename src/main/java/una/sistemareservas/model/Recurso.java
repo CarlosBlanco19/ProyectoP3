@@ -30,6 +30,19 @@ public class Recurso {
         this.categoria = categoria;
     }
 
+    // Metodo para comparar si dos recursos son iguales, basandose en el ID
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Recurso)) {
+            return false;
+        }
+        Recurso otro = (Recurso) o;
+        return ID.equals(otro.ID);
+    }
+
     public String toString() {
         return Descripcion;
     }

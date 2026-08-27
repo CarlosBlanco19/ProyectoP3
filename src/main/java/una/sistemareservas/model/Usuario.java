@@ -4,7 +4,7 @@ package una.sistemareservas.model;
 public abstract class Usuario {
     private String ID;
     private String Clave;
-    private Rol rol;
+    private final Rol rol;
     // ID, CLAVE y ROL lo tienen todos los demas tipos de usuario
 
     // Constructor
@@ -15,6 +15,7 @@ public abstract class Usuario {
     }
 
     public String getClave() {
+
         return Clave;
     }
     public String getID() {
@@ -31,7 +32,17 @@ public abstract class Usuario {
     public void setID(String id) {
         ID = id;
     }
-    public void setRol(Rol rol) {
-        this.rol = rol;
+
+    // Metodo para ver si dos usuarios son iguales, basandose en el ID
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Usuario)) {
+            return false;
+        }
+        Usuario otro = (Usuario) o;
+        return ID.equals(otro.ID);
     }
 }

@@ -26,6 +26,19 @@ public class CategoriaRecurso {
         this.Descripcion = Descripcion;
     }
 
+    // Metodo para comparar si dos categorias de recurso son iguales, basandose en el ID
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CategoriaRecurso)) {
+            return false;
+        }
+        CategoriaRecurso otra = (CategoriaRecurso) o;
+        return ID.equals(otra.ID);
+    }
+
     // Devuelve la descripcion, que vendria siendo como su informacion, se puede añadir mas detalle despues
     public String toString(){
         return Descripcion;
