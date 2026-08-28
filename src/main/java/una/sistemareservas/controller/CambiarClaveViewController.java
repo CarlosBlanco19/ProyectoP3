@@ -1,7 +1,7 @@
 package una.sistemareservas.controller;
 import una.sistemareservas.service.UsuarioService;
 import una.sistemareservas.utilidades.NavegadorPantallas;
-import una.sistemareservas.model.Usuario;
+import una.sistemareservas.model.UsuarioDTO;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -36,7 +36,7 @@ public class CambiarClaveViewController {
         String claveNueva = txtClaveNueva.getText().trim();
         String confirmarClave = txtConfirmarClave.getText().trim();
 
-        Usuario usuario = usuarioService.buscarID(id);
+        UsuarioDTO usuario = usuarioService.buscarID(id);
 
         if(usuario == null){
             lblAvisos.setText("ID no encontrado");

@@ -1,6 +1,6 @@
 package una.sistemareservas.controller;
 
-import una.sistemareservas.model.Usuario;
+import una.sistemareservas.model.UsuarioDTO;
 import una.sistemareservas.service.UsuarioService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -37,7 +37,7 @@ public class LogInViewController {
         String id = txtUsuario.getText().trim();
         String clave = txtClave.getText().trim();
 
-        Usuario usuario =  usuarioService.autenticar(id, clave);
+        UsuarioDTO usuario =  usuarioService.autenticar(id, clave);
 
         if(usuario != null){
             sesionIniciada = true;
