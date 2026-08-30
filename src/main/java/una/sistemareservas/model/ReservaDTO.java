@@ -88,5 +88,5 @@ public class ReservaDTO {
     }
     public void cambiarEstado() {
         this.estado = EstadoReserva.CANCELADA;
-    } // Tengo que revisar si estos dos cuentan como sets
+    } // Tengo que revisar si tener estos metodos aqui se puede, o mejor se mete a logica
 }
