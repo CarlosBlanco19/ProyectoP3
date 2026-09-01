@@ -18,7 +18,7 @@ public class LogInViewController {
 
     private final UsuarioService usuarioService = new UsuarioService();
 
-    public static boolean sesionIniciada = false;
+    public static UsuarioDTO usuarioLogueado = null;
 
     @FXML private TextField txtUsuario;
     @FXML private PasswordField txtClave;
@@ -40,7 +40,7 @@ public class LogInViewController {
         UsuarioDTO usuario =  usuarioService.autenticar(id, clave);
 
         if(usuario != null){
-            sesionIniciada = true;
+            usuarioLogueado = usuario;
             NavegadorPantallas.cambiarPantalla(evento, "/ui/MenuPrincipalView.fxml");
         }else{
             lblAviso.setText("Usuario o contraseña incorrectos");
