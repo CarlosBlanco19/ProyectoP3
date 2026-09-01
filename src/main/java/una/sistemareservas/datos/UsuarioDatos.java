@@ -34,7 +34,7 @@ public class UsuarioDatos {
             String clave = objeto.getString("clave");
 
             if (rol == Rol.ADMINISTRADOR) {
-                listaUsuarios.put(new AdministradorDTO(id, clave));
+                usuarios.add(new AdministradorDTO(id, clave));
             }
             else {
                 String nombre = objeto.getString("nombre");
@@ -60,7 +60,6 @@ public class UsuarioDatos {
             objeto.put("id", usuario.getID());
             objeto.put("clave", usuario.getClave());
             objeto.put("rol", usuario.getRol().name());
-            listaUsuarios.put(objeto);
 
             if (usuario instanceof FuncionarioDTO) {
                 FuncionarioDTO fun = (FuncionarioDTO) usuario;

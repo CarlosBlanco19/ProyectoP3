@@ -1,4 +1,5 @@
 package una.sistemareservas.service;
+import una.sistemareservas.datos.UsuarioDatos;
 import una.sistemareservas.model.UsuarioDTO;
 import una.sistemareservas.model.AdministradorDTO;
 import una.sistemareservas.model.FuncionarioDTO;
@@ -8,17 +9,34 @@ import una.sistemareservas.utilidades.Busqueda;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.IOException;
 
 public class UsuarioService {
 
-    private final List<UsuarioDTO> usuarios =  new ArrayList<>();
+    private List<UsuarioDTO> usuarios =  new ArrayList<>();
+    private final UsuarioDatos usuarioDatos = new UsuarioDatos();
 
-
+    private void guardar(){
+        try{
+            usuarioDatos.deserializar(usuarios);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
     public UsuarioService(){
-        //CAMBIAR CUANDO SE IMPLEMENTE PERSISTENCIA DE DATOS
-        usuarios.add(new AdministradorDTO("admin", "admin123"));
-        usuarios.add(new FuncionarioDTO("jdk","1234","Deivert","2112-1212"));
+        List<UsuarioDTO> listos;
+        try{
+            listos = usuarioDatos.serializar();
+        }catch (IOException e){
+            e.printStackTrace();
+            listos = new ArrayList<>();
+        }
+        usuarios = listos;
 
+        if(usuarios.isEmpty()){
+            usuarios.add(new AdministradorDTO("admin","1234")); //agrega un admin predeterminado
+            guardar();
+        }
     }
 
 
@@ -36,6 +54,7 @@ public class UsuarioService {
             return false;
         }
         usuario.setClave(nuevaClave);
+        guardar();
         return true;
     }
 
@@ -50,6 +69,56 @@ public class UsuarioService {
         }
         return usuario;
     }
+
+    public boolean agregar(UsuarioDTO usuario){
+        if(usuario == null || buscarID(usuario.getID()) != null){
+            return false;
+        }
+        usuarios.add(usuario);
+        guardar();
+        return true;
+    }
+
+    public boolean eliminar (String id){
+        UsuarioDTO usuario = buscarID(id);
+        if(usuario == null) {
+            return false;
+        }
+
+        usuarios.remove(usuario);
+        guardar();
+        return true;
+    }
+
+
+
+    public List<UsuarioDTO> listar(){
+        return usuarios;
+    }
+
+    public List<FuncionarioDTO> listarFuncionarios(){
+        List<FuncionarioDTO> funcionarios = new ArrayList<>();
+        for(UsuarioDTO usuario : usuarios) {
+            if (usuario instanceof FuncionarioDTO) {
+                funcionarios.add((FuncionarioDTO) usuario);
+            }
+        }
+        return funcionarios;
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 

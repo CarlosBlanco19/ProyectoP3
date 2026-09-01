@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="una.sistemareservas.controller.CategoriasViewController">
    <children>
       <Label layoutX="50.0" layoutY="32.0" text="Busqueda">
          <font>
@@ -111,5 +111,6 @@
           <TableColumn fx:id="colDescripcionCategoria" prefWidth="252.7999267578125" text="Descripcion" />
         </columns>
       </TableView>
+      <Label fx:id="lblAvisos" layoutX="14.0" layoutY="14.0" prefHeight="18.0" prefWidth="681.0" textFill="#fa0505" />
    </children>
 </AnchorPane>

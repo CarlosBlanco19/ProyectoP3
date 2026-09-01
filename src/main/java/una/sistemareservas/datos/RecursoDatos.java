@@ -44,7 +44,7 @@ public class RecursoDatos {
             // Reviso si el ID de la categoria esta en la lista de todas las categorias
             CategoriaRecursoDTO categoria = null;
             for (CategoriaRecursoDTO c : categorias) {
-                if (c.getID() == categoriaId) {
+                if (c.getID().equals(categoriaId)) {
                     categoria = c;
                     break;
                 }
