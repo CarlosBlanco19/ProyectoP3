@@ -26,6 +26,10 @@ public class CategoriaRecursoDatos {
         // Leo el archivo
         String contenido = Files.readString(archivoCategoriasR);
 
+        if (contenido.isBlank()) {
+            return categorias;
+        }
+
         // Array JSON para manejar el contenido
         JSONArray listaCategoriasR = new JSONArray(contenido);
 

@@ -88,5 +88,6 @@ public class ReservaDTO {
     }
     public void cambiarEstado() {
         this.estado = EstadoReserva.CANCELADA;
+        this.recursos.clear();
     } // Tengo que revisar si tener estos metodos aqui se puede, o mejor se mete a logica
 }

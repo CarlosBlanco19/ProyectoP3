@@ -28,13 +28,17 @@ public class RecursoDatos {
         // Leo el archivo
         String contenido = Files.readString(archivoRecursos);
 
+        if (contenido.isBlank()) {
+            return recursos;
+        }
+
         // Array JSON para manejar el contenido
         JSONArray listaRecursos = new JSONArray(contenido);
 
         // For que itera en el array JSON
         for (int i = 0; i < listaRecursos.length(); i++) {
             // Obtengo un "objeto" json de la lista
-            JSONObject objeto = new JSONObject(listaRecursos.getJSONObject(i));
+            JSONObject objeto = listaRecursos.getJSONObject(i);
 
             // Saco los datos de cada "objeto recurso"
             String id = objeto.getString("id");
@@ -70,7 +74,7 @@ public class RecursoDatos {
             JSONObject item = new JSONObject();
             item.put("id", recurso.getID());
             item.put("descripcion", recurso.getDescripcion());
-            item.put("IDcategoria", recurso.getCategoria().getID());
+            item.put("categoriaId", recurso.getCategoria().getID());
             // Inserto el "objeto" completo en la lista final, eso para cada RecursoDTO de la lista a guardar
             listaRecursos.put(item);
         }

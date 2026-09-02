@@ -24,23 +24,24 @@ public class UsuarioDatos {
 
         String contenido = Files.readString(archivoUsuarios);
 
+        if (contenido.isBlank()) {
+            return usuarios;
+        }
+
         JSONArray listaUsuarios = new JSONArray(contenido);
 
         for (int i = 0; i < listaUsuarios.length(); i++) {
-            //Esto esta generando un error de ejecucion
-            //JSONObject objeto = new JSONObject(listaUsuarios.getJSONObject(i));
-
-            JSONObject objeto = listaUsuarios.getJSONObject(i);
-            String id = objeto.getString("id");
-            Rol rol = Rol.valueOf(objeto.getString("rol"));
-            String clave = objeto.getString("clave");
+            JSONObject usuario = listaUsuarios.getJSONObject(i);
+            String id = usuario.getString("id");
+            Rol rol = Rol.valueOf(usuario.getString("rol"));
+            String clave = usuario.getString("clave");
 
             if (rol == Rol.ADMINISTRADOR) {
                 usuarios.add(new AdministradorDTO(id, clave));
             }
             else {
-                String nombre = objeto.getString("nombre");
-                String telefono = objeto.getString("telefono");
+                String nombre = usuario.getString("nombre");
+                String telefono = usuario.getString("telefono");
                 if (clave.length() != 0) {
                     usuarios.add(new FuncionarioDTO(id, clave, nombre, telefono));
                 }
