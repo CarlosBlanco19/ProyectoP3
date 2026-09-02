@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioDatos {
-    private static final Path archivoUsuarios = Path.of("src/main/resources/datos/usuarios.json");
+    private static final Path archivoUsuarios = Path.of("/src/main/resources/datos/usuarios.json");
 
     public List<UsuarioDTO> serializar() throws IOException {
         List<UsuarioDTO> usuarios = new ArrayList<>();

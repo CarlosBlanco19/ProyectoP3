@@ -63,7 +63,7 @@ public class CategoriasViewController {
         datosTabla.setAll(categorias);
     }
 
-    private void guardar(ActionEvent evento){
+    private void buscar(ActionEvent evento){
         String desc = txtBusquedaCategoria.getText().trim();
         if(desc.isEmpty()){
             cargarTabla(categoriaService.listar());
@@ -73,13 +73,48 @@ public class CategoriasViewController {
     }
 
     private void borrar(ActionEvent evento){
+        String id = txtAgregarIdCategoria.getText().trim();
+        if(id.isEmpty()){
+            lblAvisos.setText("Debe agregar una categoría");
+            return;
+        }
+
+        if(categoriaService.eliminar(id)){
+            cargarTabla(categoriaService.listar());
+            limpiar();
+        }else{
+            lblAvisos.setText("No se pudo eliminar la categoría");
+        }
+    }
+
+    private void guardar(ActionEvent evento){
+        String id = txtAgregarIdCategoria.getText().trim();
+        String desc = txtAgregarDescripcionCategoria.getText().trim();
+        if(id.isEmpty()) {
+            lblAvisos.setText("Debe agregar un id");
+            return;
+        }
+
+        boolean bandera; //para determinar si se guardo o no
+
+        if(categoriaService.buscarID(id) != null){
+            bandera = categoriaService.actualizar(id, desc);
+        }else{
+            bandera = categoriaService.agregar(new CategoriaRecursoDTO(id, desc));
+
+        }
+
+        if(bandera){
+            cargarTabla(categoriaService.listar());
+            limpiar();
+        }else{
+            lblAvisos.setText("No se guardó la categoría");
+        }
+
 
     }
 
-    private void buscar(ActionEvent evento){
-
-    }
-
+    //limpia avisos, listas de catalogos
     private void limpiar(){
         txtAgregarIdCategoria.clear();
         txtAgregarDescripcionCategoria.clear();
