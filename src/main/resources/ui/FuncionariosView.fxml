@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="una.sistemareservas.controller.FuncionariosViewController">
    <children>
       <HBox alignment="CENTER" layoutX="34.0" layoutY="48.0" prefHeight="110.0" prefWidth="650.0" spacing="7.0" style="-fx-border-color: black; -fx-border-style: solid;">
          <children>
@@ -110,17 +110,18 @@
                </graphic></Button>
          </children>
       </HBox>
-      <Label layoutX="78.0" layoutY="433.0" text="Listado">
+      <Label layoutX="34.0" layoutY="433.0" text="Listado">
          <font>
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <TableView fx:id="tabFuncionarios" layoutX="73.0" layoutY="455.0" prefHeight="203.0" prefWidth="601.0">
+      <TableView fx:id="tabFuncionarios" layoutX="34.0" layoutY="455.0" prefHeight="203.0" prefWidth="650.0">
         <columns>
           <TableColumn fx:id="colIdFuncionarios" prefWidth="221.59996032714844" text="ID" />
           <TableColumn fx:id="colNombreFuncionarios" prefWidth="195.2000732421875" text="Nombre" />
             <TableColumn fx:id="colTelefonoFuncionarios" prefWidth="185.5999755859375" text="Telefono" />
         </columns>
       </TableView>
+      <Label fx:id="lblAvisos" layoutX="34.0" layoutY="5.0" prefHeight="18.0" prefWidth="650.0" textFill="#ff0101" />
    </children>
 </AnchorPane>

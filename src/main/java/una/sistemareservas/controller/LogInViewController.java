@@ -1,7 +1,7 @@
 package una.sistemareservas.controller;
 
 import una.sistemareservas.model.UsuarioDTO;
-import una.sistemareservas.service.UsuarioService;
+import una.sistemareservas.logic.UsuarioLogic;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -16,7 +16,7 @@ public class LogInViewController {
 
     //bandera
 
-    private final UsuarioService usuarioService = new UsuarioService();
+    private final UsuarioLogic usuarioService = new UsuarioLogic();
 
     public static UsuarioDTO usuarioLogueado = null;
 
