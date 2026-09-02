@@ -27,9 +27,11 @@ public class UsuarioDatos {
         JSONArray listaUsuarios = new JSONArray(contenido);
 
         for (int i = 0; i < listaUsuarios.length(); i++) {
+
             //Esto esta generando un error de ejecucion
             //JSONObject objeto = new JSONObject(listaUsuarios.getJSONObject(i));
 
+            //creé este nuevo, directamente crea una lista de objetos json
             JSONObject objeto = listaUsuarios.getJSONObject(i);
             String id = objeto.getString("id");
             Rol rol = Rol.valueOf(objeto.getString("rol"));

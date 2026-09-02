@@ -118,12 +118,13 @@
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <TableView fx:id="tabRecursos" layoutX="77.0" layoutY="422.0" prefHeight="229.0" prefWidth="561.0">
+      <TableView fx:id="tabRecursos" layoutX="27.0" layoutY="421.0" prefHeight="230.0" prefWidth="660.0">
         <columns>
           <TableColumn fx:id="colIdRecursos" prefWidth="114.39999389648438" text="Id" />
           <TableColumn fx:id="colCategoriaRecursos" prefWidth="202.40003967285156" text="Categoria" />
-            <TableColumn fx:id="colDescripcionRecursos" prefWidth="244.79998779296875" text="Descripcion" />
+            <TableColumn fx:id="colDescripcionRecursos" prefWidth="341.60003662109375" text="Descripcion" />
         </columns>
       </TableView>
+      <Label fx:id="lblAvisos" layoutX="27.0" layoutY="5.0" prefHeight="18.0" prefWidth="660.0" textFill="RED" />
    </children>
 </AnchorPane>

@@ -1,11 +1,9 @@
 package una.sistemareservas.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import una.sistemareservas.model.Rol;
-import una.sistemareservas.service.UsuarioService;
 import una.sistemareservas.model.UsuarioDTO;
 
 public class MenuPrincipalViewController {
