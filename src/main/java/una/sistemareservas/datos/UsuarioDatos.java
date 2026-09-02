@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioDatos {
-    private static final Path archivoUsuarios = Path.of("/src/main/resources/datos/usuarios.json");
+    private static final Path archivoUsuarios = Path.of("src/main/resources/datos/usuarios.json");
 
     public List<UsuarioDTO> serializar() throws IOException {
         List<UsuarioDTO> usuarios = new ArrayList<>();
@@ -27,8 +27,10 @@ public class UsuarioDatos {
         JSONArray listaUsuarios = new JSONArray(contenido);
 
         for (int i = 0; i < listaUsuarios.length(); i++) {
-            JSONObject objeto = new JSONObject(listaUsuarios.getJSONObject(i));
+            //Esto esta generando un error de ejecucion
+            //JSONObject objeto = new JSONObject(listaUsuarios.getJSONObject(i));
 
+            JSONObject objeto = listaUsuarios.getJSONObject(i);
             String id = objeto.getString("id");
             Rol rol = Rol.valueOf(objeto.getString("rol"));
             String clave = objeto.getString("clave");
