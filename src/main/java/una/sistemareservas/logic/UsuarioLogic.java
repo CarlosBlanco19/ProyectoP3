@@ -106,19 +106,6 @@ public class UsuarioLogic {
         return funcionarios;
      }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 
