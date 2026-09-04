@@ -5,14 +5,14 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="815.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label layoutX="27.0" layoutY="33.0" text="Filtros">
          <font>
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <HBox alignment="CENTER" layoutX="27.0" layoutY="55.0" prefHeight="91.0" prefWidth="658.0" spacing="5.0" style="-fx-border-color: black; -fx-border-style: solid;">
+      <HBox alignment="CENTER" layoutX="27.0" layoutY="55.0" prefHeight="91.0" prefWidth="767.0" spacing="5.0" style="-fx-border-color: black; -fx-border-style: solid;">
          <children>
             <Label text="Fecha:">
                <font>
@@ -25,8 +25,8 @@
                   <Font name="Arial" size="14.0" />
                </font>
             </Label>
-            <ComboBox fx:id="cbCategoriaCalendarizacion" prefHeight="40.0" prefWidth="174.0" />
-            <Button fx:id="btnBuscarCalendarizacion" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="50.0" prefWidth="97.0" text="Cargar">
+            <ComboBox fx:id="cbCategoriaCalendarizacion" prefHeight="40.0" prefWidth="212.0" />
+            <Button fx:id="btnBuscarCalendarizacion" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="50.0" prefWidth="112.0" text="Cargar">
                <graphic>
                   <ImageView fitHeight="31.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -35,7 +35,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="btnImprimirCalendarizacion" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="46.0" prefWidth="109.0" text="Imprimir">
+            <Button fx:id="btnImprimirCalendarizacion" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="66.0" prefWidth="132.0" text="Imprimir">
                <graphic>
                   <ImageView fitHeight="42.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -51,7 +51,7 @@
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <TableView fx:id="tabCalendarizacion" layoutX="27.0" layoutY="190.0" prefHeight="466.0" prefWidth="657.0">
+      <TableView fx:id="tabCalendarizacion" layoutX="27.0" layoutY="190.0" prefHeight="466.0" prefWidth="767.0">
         <columns>
           <TableColumn fx:id="colHoraCalendarizacion" prefWidth="95.99996566772461" text="Hora" />
         </columns>

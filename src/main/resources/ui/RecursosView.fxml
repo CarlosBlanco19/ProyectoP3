@@ -5,39 +5,39 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="815.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label layoutX="27.0" layoutY="32.0" prefHeight="22.0" prefWidth="50.0" text="Filtro">
          <font>
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <HBox alignment="CENTER" layoutX="27.0" layoutY="55.0" prefHeight="66.0" prefWidth="660.0" spacing="7.0" style="-fx-border-color: black; -fx-border-style: solid;">
+      <HBox alignment="CENTER" layoutX="27.0" layoutY="55.0" prefHeight="82.0" prefWidth="750.0" spacing="7.0" style="-fx-border-color: black; -fx-border-style: solid;">
          <children>
             <Label text=" Categoria:">
                <font>
                   <Font name="Arial" size="13.0" />
                </font>
             </Label>
-            <ComboBox fx:id="cbBusquedaCategoriaRecursos" prefHeight="26.0" prefWidth="150.0" />
+            <ComboBox fx:id="cbBusquedaCategoriaRecursos" prefHeight="26.0" prefWidth="175.0" />
             <Label text="Descripcion:">
                <font>
                   <Font name="Arial" size="13.0" />
                </font>
             </Label>
-            <TextField fx:id="txtBusquedaRecursos" />
-            <Button fx:id="btnBuscarRecursos" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="33.0" prefWidth="89.0" text="Buscar">
+            <TextField fx:id="txtBusquedaRecursos" prefHeight="26.0" prefWidth="163.0" />
+            <Button fx:id="btnBuscarRecursos" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="47.0" prefWidth="105.0" text="Buscar">
                <graphic>
-                  <ImageView fitHeight="31.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="40.0" fitWidth="67.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../iconos/lupaBuscar.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="btnImprimirRecursos" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="54.0" prefWidth="90.0" text="Imprimir">
+            <Button fx:id="btnImprimirRecursos" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="62.0" prefWidth="122.0" text="Imprimir">
                <graphic>
-                  <ImageView fitHeight="18.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="52.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../iconos/pdfImprimir.png" />
                      </image>
@@ -46,12 +46,12 @@
             </Button>
          </children>
       </HBox>
-      <Label layoutX="133.0" layoutY="149.0" prefHeight="22.0" prefWidth="82.0" text="Recurso">
+      <Label layoutX="210.0" layoutY="148.0" prefHeight="22.0" prefWidth="82.0" text="Recurso">
          <font>
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <GridPane layoutX="133.0" layoutY="172.0" prefHeight="142.0" prefWidth="444.0" style="-fx-border-color: black; -fx-border-style: solid;">
+      <GridPane layoutX="186.0" layoutY="170.0" prefHeight="142.0" prefWidth="444.0" style="-fx-border-color: black; -fx-border-style: solid;">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="168.39996337890625" minWidth="10.0" prefWidth="72.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="261.2000274658203" minWidth="10.0" prefWidth="257.6" />
@@ -82,7 +82,7 @@
             <ComboBox fx:id="cbAgregarCategoriaRecursos" prefHeight="26.0" prefWidth="364.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
-      <HBox alignment="CENTER" layoutX="133.0" layoutY="314.0" prefHeight="66.0" prefWidth="444.0" spacing="15.0" style="-fx-border-color: black; -fx-border-style: solid;">
+      <HBox alignment="CENTER" layoutX="185.0" layoutY="312.0" prefHeight="66.0" prefWidth="444.0" spacing="20.0" style="-fx-border-color: black; -fx-border-style: solid;">
          <children>
             <Button fx:id="btnGuardarRecursos" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" text="Guardar">
                <graphic>
@@ -118,11 +118,11 @@
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <TableView fx:id="tabRecursos" layoutX="27.0" layoutY="421.0" prefHeight="230.0" prefWidth="660.0">
+      <TableView fx:id="tabRecursos" layoutX="27.0" layoutY="421.0" prefHeight="230.0" prefWidth="749.0">
         <columns>
-          <TableColumn fx:id="colIdRecursos" prefWidth="114.39999389648438" text="Id" />
-          <TableColumn fx:id="colCategoriaRecursos" prefWidth="202.40003967285156" text="Categoria" />
-            <TableColumn fx:id="colDescripcionRecursos" prefWidth="341.60003662109375" text="Descripcion" />
+          <TableColumn fx:id="colIdRecursos" prefWidth="98.39999580383301" text="Id" />
+          <TableColumn fx:id="colCategoriaRecursos" prefWidth="314.40001678466797" text="Categoria" />
+            <TableColumn fx:id="colDescripcionRecursos" prefWidth="337.0000305175781" text="Descripcion" />
         </columns>
       </TableView>
       <Label fx:id="lblAvisos" layoutX="27.0" layoutY="5.0" prefHeight="18.0" prefWidth="660.0" textFill="RED" />

@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="629.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="una.sistemareservas.controller.ReservasViewController">
+<AnchorPane prefHeight="629.0" prefWidth="815.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="una.sistemareservas.controller.ReservasViewController">
 
    <children>
       <Label layoutX="14.0" layoutY="14.0" text="Nueva Reserva">
@@ -13,7 +13,7 @@
             <Font name="Arial Bold" size="13.0" />
          </font>
       </Label>
-      <Pane layoutX="14.0" layoutY="32.0" prefHeight="335.0" prefWidth="668.0" style="-fx-border-color: black;">
+      <Pane layoutX="14.0" layoutY="32.0" prefHeight="335.0" prefWidth="769.0" style="-fx-border-color: black;">
          <children>
             <Label layoutX="13.0" layoutY="32.0" text="Frase:">
                <font>
@@ -24,13 +24,13 @@
                <font>
                   <Font size="14.0" />
                </font></Label>
-            <Label layoutX="19.0" layoutY="122.0" text="Fecha:">
+            <Label layoutX="144.0" layoutY="120.0" text="Fecha:">
                <font>
                   <Font name="Arial" size="14.0" />
                </font></Label>
-            <TextArea fx:id="txtPromptFrase" layoutX="75.0" layoutY="14.0" prefHeight="52.0" prefWidth="445.0" />
-            <TextField fx:id="txtActividad" layoutX="75.0" layoutY="77.0" prefHeight="25.0" prefWidth="445.0" />
-            <Button fx:id="btnExtraerIA" contentDisplay="RIGHT" layoutX="541.0" layoutY="14.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="99.0" text="Extraer">
+            <TextArea fx:id="txtPromptFrase" layoutX="75.0" layoutY="14.0" prefHeight="52.0" prefWidth="567.0" />
+            <TextField fx:id="txtActividad" layoutX="75.0" layoutY="77.0" prefHeight="25.0" prefWidth="567.0" />
+            <Button fx:id="btnExtraerIA" contentDisplay="RIGHT" layoutX="657.0" layoutY="14.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="99.0" text="Extraer">
                <graphic>
                   <ImageView fitHeight="43.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -38,26 +38,26 @@
                      </image>
                   </ImageView>
                </graphic></Button>
-            <DatePicker fx:id="dtReservarFecha" layoutX="75.0" layoutY="118.0" prefHeight="25.0" prefWidth="171.0" />
-            <Label layoutX="284.0" layoutY="122.0" text="Hora de Inicio:">
+            <DatePicker fx:id="dtReservarFecha" layoutX="200.0" layoutY="116.0" prefHeight="25.0" prefWidth="171.0" />
+            <Label layoutX="409.0" layoutY="120.0" text="Hora de Inicio:">
                <font>
                   <Font name="Arial" size="14.0" />
                </font>
             </Label>
-            <ComboBox fx:id="cbHoraInicio" layoutX="382.0" layoutY="118.0" prefWidth="150.0" />
-            <Label layoutX="308.0" layoutY="161.0" text="Hora fin:">
+            <ComboBox fx:id="cbHoraInicio" layoutX="507.0" layoutY="116.0" prefWidth="150.0" />
+            <Label layoutX="433.0" layoutY="159.0" text="Hora fin:">
                <font>
                   <Font name="Arial" size="14.0" />
                </font>
             </Label>
-            <ComboBox fx:id="cbHoraFinal" layoutX="382.0" layoutY="156.0" prefWidth="150.0" />
-            <ListView fx:id="lvListaCategorias" layoutX="36.0" layoutY="191.0" prefHeight="82.0" prefWidth="567.0" />
-            <Label layoutX="39.0" layoutY="169.0" text="Categorias (seleccion multple)">
+            <ComboBox fx:id="cbHoraFinal" layoutX="507.0" layoutY="154.0" prefWidth="150.0" />
+            <ListView fx:id="lvListaCategorias" layoutX="36.0" layoutY="191.0" prefHeight="82.0" prefWidth="670.0" />
+            <Label layoutX="38.0" layoutY="167.0" text="Categorias (seleccion multple)">
                <font>
                   <Font name="Arial" size="14.0" />
                </font>
             </Label>
-            <HBox layoutX="68.0" layoutY="280.0" prefHeight="52.0" prefWidth="523.0" spacing="50.0">
+            <HBox layoutX="123.0" layoutY="273.0" prefHeight="52.0" prefWidth="523.0" spacing="50.0">
                <children>
                   <Button fx:id="btnGuardarReserva" mnemonicParsing="false" prefHeight="50.0" prefWidth="125.0" text="Reservar">
                      <graphic>
@@ -90,14 +90,14 @@
             </HBox>
          </children>
       </Pane>
-      <TableView fx:id="tabMisReservas" layoutX="14.0" layoutY="397.0" prefHeight="219.0" prefWidth="574.0">
+      <TableView fx:id="tabMisReservas" layoutX="14.0" layoutY="397.0" prefHeight="219.0" prefWidth="670.0">
         <columns>
-          <TableColumn fx:id="colIdReservas" prefWidth="75.0" text="Id" />
-          <TableColumn fx:id="colActividadReservas" prefWidth="144.800048828125" text="Actividad" />
-            <TableColumn fx:id="colFechaReservas" prefWidth="79.99995422363281" text="Fecha" />
-            <TableColumn fx:id="colHorarioReservas" prefWidth="83.20001220703125" text="Horario" />
-            <TableColumn fx:id="colRecursosReservas" prefWidth="118.39996337890625" text="Recursos" />
-            <TableColumn fx:id="colEstadoReservas" prefWidth="74.39996337890625" text="Estado" />
+          <TableColumn fx:id="colIdReservas" prefWidth="61.20001411437988" text="Id" />
+          <TableColumn fx:id="colActividadReservas" prefWidth="189.99999237060547" text="Actividad" />
+            <TableColumn fx:id="colFechaReservas" prefWidth="92.00003051757812" text="Fecha" />
+            <TableColumn fx:id="colHorarioReservas" prefWidth="111.20001220703125" text="Horario" />
+            <TableColumn fx:id="colRecursosReservas" prefWidth="129.60000610351562" text="Recursos" />
+            <TableColumn fx:id="colEstadoReservas" prefWidth="88.4000244140625" text="Estado" />
         </columns>
       </TableView>
       <Label layoutX="19.0" layoutY="381.0" text="Mis Reservas">
@@ -105,7 +105,7 @@
             <Font name="Arial Bold" size="13.0" />
          </font>
       </Label>
-      <Button fx:id="btnImprimirReservas" contentDisplay="RIGHT" layoutX="596.0" layoutY="481.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="99.0" text="Imprimir">
+      <Button fx:id="btnImprimirReservas" contentDisplay="RIGHT" layoutX="701.0" layoutY="481.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="99.0" text="Imprimir">
          <graphic>
             <ImageView fitHeight="33.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
                <image>

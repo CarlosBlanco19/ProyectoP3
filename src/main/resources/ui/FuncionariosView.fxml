@@ -5,9 +5,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="una.sistemareservas.controller.FuncionariosViewController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="815.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="una.sistemareservas.controller.FuncionariosViewController">
    <children>
-      <HBox alignment="CENTER" layoutX="34.0" layoutY="48.0" prefHeight="110.0" prefWidth="650.0" spacing="7.0" style="-fx-border-color: black; -fx-border-style: solid;">
+      <HBox alignment="CENTER" layoutX="34.0" layoutY="48.0" prefHeight="110.0" prefWidth="752.0" spacing="7.0" style="-fx-border-color: black; -fx-border-style: solid;">
          <children>
             <Label text="ID:">
                <font>
@@ -51,7 +51,7 @@
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <GridPane layoutX="121.0" layoutY="193.0" prefHeight="126.0" prefWidth="438.0" style="-fx-border-color: black; -fx-border-style: solid;">
+      <GridPane layoutX="121.0" layoutY="193.0" prefHeight="126.0" prefWidth="564.0" style="-fx-border-color: black; -fx-border-style: solid;">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="225.20001220703125" minWidth="10.0" prefWidth="64.8" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="399.59999084472656" minWidth="10.0" prefWidth="372.0" />
@@ -82,7 +82,7 @@
             <TextField fx:id="txtAgregarTelefono" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
-      <HBox alignment="CENTER" layoutX="121.0" layoutY="319.0" prefHeight="92.0" prefWidth="438.0" spacing="15.0" style="-fx-border-color: black;">
+      <HBox alignment="CENTER" layoutX="121.0" layoutY="319.0" prefHeight="92.0" prefWidth="564.0" spacing="50.0" style="-fx-border-color: black;">
          <children>
             <Button fx:id="btnGuardarFuncionario" mnemonicParsing="false" prefHeight="50.0" prefWidth="110.0" text="Guardar">
                <graphic>
@@ -115,11 +115,11 @@
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <TableView fx:id="tabFuncionarios" layoutX="34.0" layoutY="455.0" prefHeight="203.0" prefWidth="650.0">
+      <TableView fx:id="tabFuncionarios" layoutX="34.0" layoutY="455.0" prefHeight="203.0" prefWidth="752.0">
         <columns>
-          <TableColumn fx:id="colIdFuncionarios" prefWidth="221.59996032714844" text="ID" />
-          <TableColumn fx:id="colNombreFuncionarios" prefWidth="195.2000732421875" text="Nombre" />
-            <TableColumn fx:id="colTelefonoFuncionarios" prefWidth="185.5999755859375" text="Telefono" />
+          <TableColumn fx:id="colIdFuncionarios" prefWidth="175.5999984741211" text="ID" />
+          <TableColumn fx:id="colNombreFuncionarios" prefWidth="340.60003662109375" text="Nombre" />
+            <TableColumn fx:id="colTelefonoFuncionarios" prefWidth="238.5999755859375" text="Telefono" />
         </columns>
       </TableView>
       <Label fx:id="lblAvisos" layoutX="34.0" layoutY="5.0" prefHeight="18.0" prefWidth="650.0" textFill="#ff0101" />

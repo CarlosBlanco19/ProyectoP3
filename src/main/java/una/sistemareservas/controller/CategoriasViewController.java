@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
-import una.sistemareservas.logic.CategoriaLogic;
+import una.sistemareservas.service.CategoriaService;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class CategoriasViewController {
     @FXML private TableColumn<CategoriaRecursoDTO, String> colIdCategoria;
     @FXML private TableColumn<CategoriaRecursoDTO, String> colDescripcionCategoria;
 
-    private final CategoriaLogic categoriaService = new CategoriaLogic();
+    private final CategoriaService categoriaService = new CategoriaService();
     private final ObservableList<CategoriaRecursoDTO> datosTabla = FXCollections.observableArrayList();
 
     @FXML
@@ -68,7 +68,7 @@ public class CategoriasViewController {
         if(desc.isEmpty()){
             cargarTabla(categoriaService.listar());
         }else{
-            cargarTabla(categoriaService.buscarDescripcion(desc));
+            cargarTabla(categoriaService.buscarPorDescripcion(desc));
         }
     }
 

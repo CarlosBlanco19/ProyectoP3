@@ -5,21 +5,21 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="815.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label layoutX="39.0" layoutY="30.0" text="Semana">
          <font>
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <HBox alignment="CENTER" layoutX="39.0" layoutY="59.0" prefHeight="90.0" prefWidth="622.0" spacing="10.0" style="-fx-border-color: black; -fx-border-style: solid;">
+      <HBox alignment="CENTER" layoutX="39.0" layoutY="59.0" prefHeight="90.0" prefWidth="754.0" spacing="10.0" style="-fx-border-color: black; -fx-border-style: solid;">
          <children>
             <Label text="Fecha de referencia:">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font name="Arial" size="18.0" />
                </font></Label>
-            <DatePicker fx:id="dtActividadesFecha" prefHeight="42.0" prefWidth="190.0" />
-            <Button fx:id="btnBuscarActividades" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="49.0" prefWidth="94.0" text="Cargar">
+            <DatePicker fx:id="dtActividadesFecha" prefHeight="42.0" prefWidth="220.0" />
+            <Button fx:id="btnBuscarActividades" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="50.0" prefWidth="111.0" text="Cargar">
                <graphic>
                   <ImageView fitHeight="41.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -27,7 +27,7 @@
                      </image>
                   </ImageView>
                </graphic></Button>
-            <Button fx:id="btnImprimirActividades" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="20.0" prefWidth="114.0" text="Imprimir">
+            <Button fx:id="btnImprimirActividades" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="71.0" prefWidth="143.0" text="Imprimir">
                <graphic>
                   <ImageView fitHeight="43.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -42,7 +42,7 @@
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <TableView fx:id="tabActividades" layoutX="38.0" layoutY="197.0" prefHeight="446.0" prefWidth="622.0">
+      <TableView fx:id="tabActividades" layoutX="38.0" layoutY="197.0" prefHeight="446.0" prefWidth="754.0">
         <columns>
           <TableColumn fx:id="colHoraActividades" prefWidth="75.0" text="Hora" />
         </columns>

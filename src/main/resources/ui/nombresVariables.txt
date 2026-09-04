@@ -1,0 +1,145 @@
+::::::::::::::::::::::::::NOMBRES DE LAS VARIABLES::::::::::::::::::::::
+
+====================login.fxml===================
+barra de texto de usuario => txtUsuario
+barra de la clave del usuario => txtClave
+boton para ingresar => btnIngresar
+boton para cancelar => btnCancelar
+boton para cambiar => btnCambiar
+
+====================cambiarClave.fxml===================
+barra de texto de la clave actual => txtClaveActual
+barra de texto de la clave nueva => txtClaveNueva
+barra de texto de confirmacion de clave nueva => txtConfirmarClave
+boton de aceptar => btnAceptar
+boton de cancelar => btnCancelar
+
+
+Funcionarios.fxml[[[[[[[[[[[[[[[[[[[[[[[
+barra de busqueda de funcionario con ID => txtBusquedaId
+barra de busqueda de funcionario con Nombre => txtBusquedaNombre
+boton que busca el funcionario => btnBuscarFuncionario
+boton de imprimir pdf en funcionarios => btnImprimirFuncionarios
+
+barra para agregar la id de funcionario => txtAgregarId
+barra para agregar el nombre de funcionario => txtAgregarNombre
+barra para agregar telefono de funcionario => txtAgregarTelefono
+boton para guardar funcionario => btnGuardarFuncionario
+boton para borrar funcionario => btnBorrarFuncionario
+boton para limpiar funcionario => btnLimpiarFuncionario
+
+tabla o excel de funcionarios => tabFuncionarios
+columna de id de Funcionarios en la tabla => colIdFuncionarios
+columna de nombre de Funcionarios en la tabla => colNombreFuncionarios
+columna de telefono de Funcionarios en la tabla => colTelefonoFuncionarios
+]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+Categorias.fxml[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
+barra de busqueda de categorias => txtBusquedaCategoria
+boton de busqueda de categoria => btnBuscarCategoria
+boton de imprimir pdf en categorias => btnImprimirCategoria
+
+barra para agregar la id de la categoria autogenerado => txtAgregarIdCategoria
+barra para agregar descripcion de la categoria =>txtAgregarDescripcionCategoria
+boton para guardar categoria => btnGuardarCategoria
+boton para borrar categoria => btnBorrarCategoria
+boton para limpiar categoria => btnLimpiarCategoria
+
+tabla o excel de categorias => tabCategorias
+columna de id de categorias en la tabla => colIdCategoria
+columna de descripcion de categorias en la tabla => colDescripcionCategoria
+]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+Recursos.fxml[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
+Combo box para elegir la categoria => cbBusquedaCategoriaRecursos
+barra de busqueda de recursos => txtBusquedaRecursos
+boton de busqueda de recursos => btnBuscarRecursos
+boton de imprimir pdf en recursos => btnImprimirRecursos
+
+barra para agegar la id de los recursos => txtAgregarIdRecursos
+combo box para elegir la categoria de los recursos => cbAgregarCategoriaRecursos
+barra para agregar descripcion de los recursos => txtAgregarDescripcionRecursos
+boton para guardar recursos => btnGuardarRecursos
+boton para borrar recursos => btnBorrarRecursos
+boton para limpiar recursos => btnLimpiarRecursos
+
+tabla o excel de recursos => tabRecursos
+columna de id de recursos en la tabla => colIdRecursos
+columna de nombre de recursos en la tabla => colCategoriaRecursos
+columna de telefono de recursos en la tabla => colDescripcionRecursos
+]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+Calenarizacion.fxml[[[[[[[[[[[[[[[
+date picker para elegir fecha en pestaña de calendarizacion => dtCalendarizacionFecha
+Combo box para elegir la categoría del recurso en el calendario => cbCategoriaCalendarizacion
+Boton de buscar en el calendario de recursos => btnBuscarCalendarizacion
+botón de imprimir pdf en calendario de recursos => btnImprimirCalendarizacion
+
+tabla o Excel de calendario de recursos => tabCalendarizacion
+columna de hora de calendario de recursos = colHoraCalendarizacion
+]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+Actividades.fxml[[[[[[[[[[[[[[[
+date picker para elegir fecha en pestaña de actividades => dtActividadesFecha
+Boton de buscar en el calendario de actividades => btnBuscarActividades
+botón de imprimir pdf en calendario de actividades => btnImprimirActividades
+
+tabla o Excel de calendario de actividades => tabActividades
+columna de hora de calendario de actividades = colHoraActividades
+]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+Estadisticas.fxml[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
+date picker para elegir fecha DESDE en RECURSOS => dtDesdeRecursosFecha
+date picker para elegir fecha Hasta en RECURSOS => dtHastaRecursosFecha
+botón de cargar fechas en RECURSOS => btnCargarRecursos
+
+date picker para elegir fecha DESDE en ACTIVIDADES => dtDesdeActividadesFecha
+date picker para elegir fecha Hasta en ACTIVIDADES => dtHastaActividadesFecha
+botón de cargar fechas en ACTIVIDADES => btnCargarActividades
+
+tabla de estadisticas en RECURSOS => tabEstadisticasRecursos
+columna de categoría en RECRUSOS => colEstCategoriaRecursos
+columna de cantidad en RECURSOS > colEstCantidadRecursos
+
+tabla de estadisticas en ACTIVIDADES => tabEstadisticasActividades
+columna de semana en ACTIVIDADES => colEstSemanaActividades
+columna de cantidad en ACTIVIDADES > colEstCantidadActividades
+
+barras de estadísticas de RECURSOS => bcRecursos
+barras de estadísticas de ACTIVIDADES => bcActividades
+]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+Carpeta de Reservas[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
+
+Area para poner el texto del prompt => txtPromptFrase
+botón para usar IA => btnExtraerIA
+Area para poner la actividad que se hacer => txtActividad
+date picker de fecha de reserva => dtReservarFecha
+combo box para elegir hora de inicio => cbHoraInicio
+combo box para elegir hora de final => cbHoraFinal
+Lista donde saldra cada categoría => lvListaCategorias
+botón de guardar reserva => btnGuardarReserva
+botón de cancelar reserva => btnCancelarReserva
+botón de limpiar reserva => btnLimpiarReserva
+
+tabla de reservas de usuario => tabMisReservas
+columna de id en reservas de usuario => colIdReservas
+columna de actividad en reservas de usuario => colActividadReservas
+columna de fecha en reservas de usuario => colFechaReservas
+columna de horario en reservas de usuario => colHorarioReservas
+columna de recursos en reservas de usuario => colRecursosReservas
+columna de estado en reservas de usuario => colEstadoReservas
+
+botón de imprimir pdf en reservas => btnImprimirReservas
+]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+Menu Principal id de las tabs o pestañas[[[[[[[[[[[[[[[[[[[[[[[[[
+
+tabPane de menú principal => tabPaneMenuPrincipal
+pestaña de reservas (funcionarios) => tabReservas
+pestaña de funcionarios (admin) => tabFuncionarios
+pestaña de categoria (admin) => tabCategorias
+pestaña de recursos (admin) => tabRecursos
+pestaña de calendarizacion (los 2) => tabCalendarizacion
+pestaña de actividades (los 2) => tabActividades
+pestaña de estadisiticas (los 2) => tabEstadisticas

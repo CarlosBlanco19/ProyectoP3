@@ -5,22 +5,22 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="una.sistemareservas.controller.CategoriasViewController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="815.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="una.sistemareservas.controller.CategoriasViewController">
    <children>
       <Label layoutX="50.0" layoutY="32.0" text="Busqueda">
          <font>
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <HBox alignment="CENTER" layoutX="50.0" layoutY="54.0" prefHeight="90.0" prefWidth="573.0" spacing="15.0" style="-fx-border-color: black; -fx-border-style: solid;">
+      <HBox alignment="CENTER" layoutX="50.0" layoutY="54.0" prefHeight="90.0" prefWidth="736.0" spacing="15.0" style="-fx-border-color: black; -fx-border-style: solid;">
          <children>
             <Label text="Descripcion:">
                <font>
                   <Font name="Arial" size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="txtBusquedaCategoria" prefHeight="26.0" prefWidth="175.0" />
-            <Button fx:id="btnBuscarCategoria" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="44.0" prefWidth="95.0" text="Buscar">
+            <TextField fx:id="txtBusquedaCategoria" prefHeight="40.0" prefWidth="239.0" />
+            <Button fx:id="btnBuscarCategoria" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="44.0" prefWidth="148.0" text="Buscar">
                <graphic>
                   <ImageView fitHeight="36.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -29,7 +29,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="btnImprimirCategoria" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="28.0" prefWidth="126.0" text="Imprimir">
+            <Button fx:id="btnImprimirCategoria" contentDisplay="RIGHT" mnemonicParsing="false" prefHeight="66.0" prefWidth="145.0" text="Imprimir">
                <graphic>
                   <ImageView fitHeight="39.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -40,7 +40,7 @@
             </Button>
          </children>
       </HBox>
-      <GridPane layoutX="148.0" layoutY="192.0" prefHeight="130.0" prefWidth="413.0" style="-fx-border-color: black; -fx-border-style: solid;">
+      <GridPane layoutX="148.0" layoutY="192.0" prefHeight="130.0" prefWidth="558.0" style="-fx-border-color: black; -fx-border-style: solid;">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="196.20001220703125" minWidth="10.0" prefWidth="80.99998474121095" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="338.6000518798828" minWidth="10.0" prefWidth="321.00001525878906" />
@@ -69,7 +69,7 @@
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <HBox alignment="CENTER" layoutX="148.0" layoutY="322.0" prefHeight="82.0" prefWidth="414.0" spacing="15.0" style="-fx-border-color: black; -fx-border-style: solid;">
+      <HBox alignment="CENTER" layoutX="148.0" layoutY="322.0" prefHeight="82.0" prefWidth="558.0" spacing="50.0" style="-fx-border-color: black; -fx-border-style: solid;">
          <children>
             <Button fx:id="btnGuardarCategoria" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" text="Guardar">
                <graphic>
@@ -105,10 +105,10 @@
             <Font name="Arial Bold" size="18.0" />
          </font>
       </Label>
-      <TableView fx:id="tabCategorias" layoutX="61.0" layoutY="445.0" prefHeight="215.0" prefWidth="574.0">
+      <TableView fx:id="tabCategorias" layoutX="61.0" layoutY="445.0" prefHeight="215.0" prefWidth="729.0">
         <columns>
-          <TableColumn fx:id="colIdCategoria" prefWidth="287.2000541687012" text="Id" />
-          <TableColumn fx:id="colDescripcionCategoria" prefWidth="252.7999267578125" text="Descripcion" />
+          <TableColumn fx:id="colIdCategoria" prefWidth="78.0000228881836" text="Id" />
+          <TableColumn fx:id="colDescripcionCategoria" prefWidth="650.8000183105469" text="Descripcion" />
         </columns>
       </TableView>
       <Label fx:id="lblAvisos" layoutX="14.0" layoutY="14.0" prefHeight="18.0" prefWidth="681.0" textFill="#fa0505" />
