@@ -81,7 +81,6 @@ public class ReservaDTO {
         this.hora_final = hora_final;
     }
 
-
     // Metodos
     public void asignarRecurso(RecursoDTO recurso) {
         recursos.add(recurso); // Añade un recurso a la lista de recursos
@@ -90,4 +89,6 @@ public class ReservaDTO {
         this.estado = EstadoReserva.CANCELADA;
         this.recursos.clear();
     } // Tengo que revisar si tener estos metodos aqui se puede, o mejor se mete a logica
+
+    // TODO: Cambiarlo por set y get
 }
