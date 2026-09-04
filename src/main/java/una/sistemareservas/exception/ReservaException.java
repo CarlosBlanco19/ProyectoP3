@@ -1,6 +1,6 @@
 package una.sistemareservas.exception;
 
-import una.sistemareservas.model.CategoriaRecursoDTO;
+import una.sistemareservas.dto.CategoriaRecursoDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
@@ -12,10 +12,6 @@ public class ReservaException extends Exception {
     public ReservaException(String mensaje) {
         this.categoriasNoDisponibles = null;
         super(mensaje);
-    }
-
-    public ReservaException(String mensaje, Throwable error) {
-        super(mensaje, error);
     }
 
     public ReservaException(String mensaje, List<CategoriaRecursoDTO> categoriasNoDisponibles) {

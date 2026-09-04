@@ -37,7 +37,7 @@ public class CategoriasViewController {
     @FXML
     private void initialize(){
         colIdCategoria.setCellValueFactory(new PropertyValueFactory<>("ID"));
-        colDescripcionCategoria.setCellValueFactory(new PropertyValueFactory<>("descripción"));
+        colDescripcionCategoria.setCellValueFactory(new PropertyValueFactory<>("Descripcion"));
 
         cargarTabla(categoriaService.listar());
         tabCategorias.setItems(datosTabla);
