@@ -1,7 +1,7 @@
 package una.sistemareservas.service;
 
 import una.sistemareservas.logic.CategoriaLogic;
-import una.sistemareservas.model.CategoriaRecursoDTO;
+import una.sistemareservas.dto.CategoriaRecursoDTO;
 
 import java.util.List;
 

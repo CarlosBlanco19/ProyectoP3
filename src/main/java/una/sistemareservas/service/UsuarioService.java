@@ -1,8 +1,8 @@
 package una.sistemareservas.service;
 
 import una.sistemareservas.logic.UsuarioLogic;
-import una.sistemareservas.model.FuncionarioDTO;
-import una.sistemareservas.model.UsuarioDTO;
+import una.sistemareservas.dto.FuncionarioDTO;
+import una.sistemareservas.dto.UsuarioDTO;
 
 import java.util.List;
 

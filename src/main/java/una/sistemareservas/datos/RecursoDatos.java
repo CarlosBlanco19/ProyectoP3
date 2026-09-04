@@ -2,8 +2,8 @@ package una.sistemareservas.datos;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import una.sistemareservas.model.CategoriaRecursoDTO;
-import una.sistemareservas.model.RecursoDTO;
+import una.sistemareservas.dto.CategoriaRecursoDTO;
+import una.sistemareservas.dto.RecursoDTO;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

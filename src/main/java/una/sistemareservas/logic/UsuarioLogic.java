@@ -1,8 +1,8 @@
 package una.sistemareservas.logic;
 import una.sistemareservas.datos.UsuarioDatos;
-import una.sistemareservas.model.UsuarioDTO;
-import una.sistemareservas.model.AdministradorDTO;
-import una.sistemareservas.model.FuncionarioDTO;
+import una.sistemareservas.dto.UsuarioDTO;
+import una.sistemareservas.dto.AdministradorDTO;
+import una.sistemareservas.dto.FuncionarioDTO;
 
 
 import una.sistemareservas.utilidades.Busqueda;

@@ -1,4 +1,4 @@
-package una.sistemareservas.model;
+package una.sistemareservas.dto;
 
 import java.util.List;
 import java.util.ArrayList;

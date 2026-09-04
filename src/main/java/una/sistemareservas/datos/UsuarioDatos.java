@@ -2,10 +2,10 @@ package una.sistemareservas.datos;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import una.sistemareservas.model.UsuarioDTO;
-import una.sistemareservas.model.AdministradorDTO;
-import una.sistemareservas.model.FuncionarioDTO;
-import una.sistemareservas.model.Rol;
+import una.sistemareservas.dto.UsuarioDTO;
+import una.sistemareservas.dto.AdministradorDTO;
+import una.sistemareservas.dto.FuncionarioDTO;
+import una.sistemareservas.dto.Rol;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -1,7 +1,7 @@
 package una.sistemareservas.logic;
 
 import una.sistemareservas.datos.RecursoDatos;
-import una.sistemareservas.model.RecursoDTO;
+import una.sistemareservas.dto.RecursoDTO;
 import una.sistemareservas.utilidades.Busqueda;
 
 import java.io.IOException;

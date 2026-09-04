@@ -1,7 +1,7 @@
 package una.sistemareservas.controller;
 import una.sistemareservas.logic.UsuarioLogic;
 import una.sistemareservas.utilidades.NavegadorPantallas;
-import una.sistemareservas.model.UsuarioDTO;
+import una.sistemareservas.dto.UsuarioDTO;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

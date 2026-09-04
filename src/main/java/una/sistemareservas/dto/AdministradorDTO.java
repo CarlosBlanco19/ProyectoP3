@@ -1,4 +1,4 @@
-package una.sistemareservas.model;
+package una.sistemareservas.dto;
 
 public class AdministradorDTO extends UsuarioDTO {
     // Usuario ADMINISTRADOR, simplemente hereda

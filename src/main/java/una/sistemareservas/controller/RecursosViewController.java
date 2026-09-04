@@ -5,8 +5,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import una.sistemareservas.model.CategoriaRecursoDTO;
-import una.sistemareservas.model.RecursoDTO;
+import una.sistemareservas.dto.CategoriaRecursoDTO;
+import una.sistemareservas.dto.RecursoDTO;
 import una.sistemareservas.service.CategoriaService;
 import una.sistemareservas.service.RecursoService;
 
@@ -55,7 +55,7 @@ public class RecursosViewController {
 
 
         if(id.isEmpty() || cat == null || desc.isEmpty()){
-            lblAvisos.setText("Debe llenar todos los campos para agrefgar");
+            lblAvisos.setText("Debe llenar todos los campos para agregar");
             return;
         }
 

@@ -10,7 +10,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import una.sistemareservas.model.CategoriaRecursoDTO;
+import una.sistemareservas.dto.CategoriaRecursoDTO;
 import una.sistemareservas.logic.CategoriaLogic;
 
 import java.util.List;

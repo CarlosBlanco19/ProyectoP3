@@ -3,8 +3,8 @@ package una.sistemareservas.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import una.sistemareservas.model.Rol;
-import una.sistemareservas.model.UsuarioDTO;
+import una.sistemareservas.dto.Rol;
+import una.sistemareservas.dto.UsuarioDTO;
 
 public class MenuPrincipalViewController {
 

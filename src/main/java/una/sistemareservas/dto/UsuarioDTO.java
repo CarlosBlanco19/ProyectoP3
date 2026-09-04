@@ -1,4 +1,4 @@
-package una.sistemareservas.model;
+package una.sistemareservas.dto;
 
 // Usuario abstracto base del que heredan Funcionario y Administrador
 public abstract class UsuarioDTO {

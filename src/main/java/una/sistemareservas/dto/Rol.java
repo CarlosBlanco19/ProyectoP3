@@ -1,4 +1,4 @@
-package una.sistemareservas.model;
+package una.sistemareservas.dto;
 
 public enum Rol {
     ADMINISTRADOR,

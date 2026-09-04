@@ -1,7 +1,7 @@
 package una.sistemareservas.service;
 
 import una.sistemareservas.logic.RecursoLogic;
-import una.sistemareservas.model.RecursoDTO;
+import una.sistemareservas.dto.RecursoDTO;
 
 import java.util.List;
 
