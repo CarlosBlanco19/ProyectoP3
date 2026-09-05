@@ -22,7 +22,7 @@ public class FuncionarioLogic {
         return usuarioLogic.eliminar(id);
     }
 
-    public boolean agregar(String id, String telefono, String nombre){
+    public boolean agregar(String id, String nombre, String telefono){
 
         if(id == null || nombre.isBlank() || id.isBlank() || nombre == null){
             return false;

@@ -25,4 +25,9 @@ public class CategoriaRecursoDTO {
     public void setDescripcion(String Descripcion) {
         this.Descripcion = Descripcion;
     }
+
+    @Override
+    public String toString(){
+        return Descripcion;
+    }
 }

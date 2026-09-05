@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
+import una.sistemareservas.service.UsuarioService;
 import una.sistemareservas.utilidades.NavegadorPantallas;
 
 
@@ -16,7 +17,7 @@ public class LogInViewController {
 
     //bandera
 
-    private final UsuarioLogic usuarioService = new UsuarioLogic();
+    private final UsuarioService usuarioService = new UsuarioService();
 
     public static UsuarioDTO usuarioLogueado = null;
 

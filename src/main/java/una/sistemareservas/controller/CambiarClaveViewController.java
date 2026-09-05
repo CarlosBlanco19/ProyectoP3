@@ -1,5 +1,6 @@
 package una.sistemareservas.controller;
 import una.sistemareservas.logic.UsuarioLogic;
+import una.sistemareservas.service.UsuarioService;
 import una.sistemareservas.utilidades.NavegadorPantallas;
 import una.sistemareservas.dto.UsuarioDTO;
 
@@ -15,7 +16,7 @@ import javafx.scene.control.Label;
 
 public class CambiarClaveViewController {
 
-    private final UsuarioLogic usuarioService = new UsuarioLogic();
+    private final UsuarioService usuarioService = new UsuarioService();
 
     @FXML private TextField txtID;
     @FXML private PasswordField txtClaveActual;
