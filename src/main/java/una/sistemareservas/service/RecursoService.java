@@ -6,31 +6,30 @@ import una.sistemareservas.dto.RecursoDTO;
 import java.util.List;
 
 public class RecursoService {
-    private final RecursoLogic recurseLogic;
-
+    private final RecursoLogic recursoLogic;
 
     public RecursoService(CategoriaService categoriaService) {
-        this.recurseLogic = new RecursoLogic(categoriaService.logic());
+        this.recursoLogic = new RecursoLogic(categoriaService.logic());
     }
-
-
 
     public RecursoDTO buscarID(String id) {
-        return recurseLogic.buscarID(id);
+        return recursoLogic.buscarID(id);
     }
     public boolean agregar(RecursoDTO recurso) {
-        return recurseLogic.agregar(recurso);
+        return recursoLogic.agregar(recurso);
     }
 
     public boolean eliminar(String id) {
-        return recurseLogic.eliminar(id);
+        return recursoLogic.eliminar(id);
     }
     public List<RecursoDTO> listar() {
-        return recurseLogic.listar();
+        return recursoLogic.listar();
     }
 
-
     public List<RecursoDTO> listarPorCategoria(String categoria) {
-        return recurseLogic.listarCategoria(categoria);
+        return recursoLogic.listarCategoria(categoria);
+    }
+    public RecursoLogic logic() {
+        return recursoLogic;
     }
 }

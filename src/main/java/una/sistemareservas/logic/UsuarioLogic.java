@@ -90,8 +90,6 @@ public class UsuarioLogic {
         return true;
     }
 
-
-
     public List<UsuarioDTO> listar(){
         return usuarios;
     }

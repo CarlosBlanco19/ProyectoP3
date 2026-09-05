@@ -8,8 +8,6 @@ import java.util.List;
 public class CategoriaService {
     private final CategoriaLogic categoriaLogic = new CategoriaLogic();
 
-
-
     public CategoriaRecursoDTO buscarID(String id) {
         return categoriaLogic.buscarID(id);
     }
@@ -25,8 +23,6 @@ public class CategoriaService {
     public boolean actualizar(String id, String desc) {
         return categoriaLogic.actualizar(id, desc);
     }
-
-
 
     public boolean eliminar(String id) {
         return categoriaLogic.eliminar(id);

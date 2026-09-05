@@ -10,13 +10,18 @@ public class ReservaException extends Exception {
     private final List<CategoriaRecursoDTO> categoriasNoDisponibles;
 
     public ReservaException(String mensaje) {
-        this.categoriasNoDisponibles = null;
         super(mensaje);
+        this.categoriasNoDisponibles = new ArrayList<>();
     }
 
     public ReservaException(String mensaje, List<CategoriaRecursoDTO> categoriasNoDisponibles) {
-        this.categoriasNoDisponibles = new ArrayList<>(categoriasNoDisponibles);
         super(mensaje);
+        this.categoriasNoDisponibles = new ArrayList<>(categoriasNoDisponibles);
+    }
+
+    public ReservaException(String mensaje, Throwable error) {
+        super(mensaje, error);
+        this.categoriasNoDisponibles = new ArrayList<>();
     }
 
     public List<CategoriaRecursoDTO> getCategoriasNoDisponibles() {
