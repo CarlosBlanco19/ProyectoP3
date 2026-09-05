@@ -10,6 +10,15 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
+import una.sistemareservas.dto.ReservaDTO;
+import una.sistemareservas.service.ReservaService;
+import una.sistemareservas.dto.CategoriaRecursoDTO;
+import una.sistemareservas.service.CategoriaService;
+import una.sistemareservas.dto.RecursoDTO;
+import una.sistemareservas.service.RecursoService;
+
+import java.time.LocalDate;
+
 
 public class ReservasViewController {
     @FXML private TextArea txtPromptFrase;
@@ -30,4 +39,12 @@ public class ReservasViewController {
     @FXML private TableColumn colRecursosReservas;
     @FXML private TableColumn colEstadoReservas;
     @FXML private Button btnImprimirReservas;
+
+    private void reservar(){
+        String actividad = txtActividad.getText().trim();
+        LocalDate fecha = dtReservarFecha.getValue();
+
+
+    }
+
 }
