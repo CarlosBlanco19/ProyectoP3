@@ -134,7 +134,7 @@ public class FuncionariosViewController {
             return;
         }
 
-        if(funcionarioService.agregar(id, tel, nom)){
+        if(funcionarioService.agregar(id, nom, tel)){
             cargarTabla(funcionarioService.listar());
             limpiar();
         }else{
