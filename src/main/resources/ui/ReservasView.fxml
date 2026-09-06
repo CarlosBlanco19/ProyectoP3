@@ -101,14 +101,14 @@
             </HBox>
          </children>
       </Pane>
-      <TableView fx:id="tabMisReservas" layoutX="14.0" layoutY="397.0" prefHeight="219.0" prefWidth="670.0">
+      <TableView fx:id="tabMisReservas" layoutX="14.0" layoutY="397.0" prefHeight="219.0" prefWidth="680.0">
         <columns>
-          <TableColumn fx:id="colIdReservas" prefWidth="61.20001411437988" text="Id" />
-          <TableColumn fx:id="colActividadReservas" prefWidth="189.99999237060547" text="Actividad" />
-            <TableColumn fx:id="colFechaReservas" prefWidth="92.00003051757812" text="Fecha" />
-            <TableColumn fx:id="colHorarioReservas" prefWidth="111.20001220703125" text="Horario" />
-            <TableColumn fx:id="colRecursosReservas" prefWidth="129.60000610351562" text="Recursos" />
-            <TableColumn fx:id="colEstadoReservas" prefWidth="88.4000244140625" text="Estado" />
+          <TableColumn fx:id="colIdReservas" prefWidth="104.7999849319458" text="Id" />
+          <TableColumn fx:id="colActividadReservas" prefWidth="162.40000915527344" text="Actividad" />
+            <TableColumn fx:id="colFechaReservas" prefWidth="114.4000244140625" text="Fecha" />
+            <TableColumn fx:id="colHorarioReservas" prefWidth="112.79998779296875" text="Horario" />
+            <TableColumn fx:id="colRecursosReservas" prefWidth="111.199951171875" text="Recursos" />
+            <TableColumn fx:id="colEstadoReservas" prefWidth="75.2000732421875" text="Estado" />
         </columns>
       </TableView>
       <Label layoutX="19.0" layoutY="381.0" text="Mis Reservas">

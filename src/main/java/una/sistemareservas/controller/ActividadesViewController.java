@@ -48,8 +48,17 @@ public class ActividadesViewController {
 
     @FXML
     public void initialize() {
-        colHoraActividades.setCellValueFactory(cellData -> cellData.getValue().horaProperty());
+        try {
+            una.sistemareservas.service.CategoriaService categoriaLogic = new una.sistemareservas.service.CategoriaService();
+            una.sistemareservas.service.RecursoService recursoLogic = new una.sistemareservas.service.RecursoService(categoriaLogic);
+            una.sistemareservas.service.UsuarioService usuarioLogic = new una.sistemareservas.service.UsuarioService();
 
+            this.reservaLogic = new ReservaService(usuarioLogic, categoriaLogic, recursoLogic );
+        } catch (Exception e) {
+            mostrarAlerta("Error al cargar los datos: " + e.getMessage());
+        }
+
+        colHoraActividades.setCellValueFactory(cellData -> cellData.getValue().horaProperty());
 
         java.util.List<TableColumn<FilaHorario, String>> columnasDias = java.util.Arrays.asList(
                 colLunes, colMartes, colMiercoles, colJueves, colViernes, colSabado, colDomingo
@@ -61,6 +70,22 @@ public class ActividadesViewController {
 
             if (columnaActual != null) {
                 columnaActual.setCellValueFactory(cellData -> cellData.getValue().diaProperty(index));
+                // 2. NUEVO: Reglas de estilo y color
+                columnaActual.setCellFactory(columna -> new TableCell<>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null || item.trim().isEmpty()) {
+                            setText("");
+                            setStyle(""); // Estilo por defecto (blanco)
+                        } else {
+                            // Si hay una actividad
+                            setText(item);
+                            // Aplicamos el fondo amarillo claro, un borde y texto centrado (estilo CSS)
+                            setStyle("-fx-background-color: #fff2cc; -fx-border-color: lightgray; -fx-border-width: 0.5px; -fx-alignment: center;");
+                        }
+                    }
+                });
             }
         }
 
@@ -150,26 +175,36 @@ public class ActividadesViewController {
 
         // 3. Poblar las celdas con las reservas de la lógica
         if (reservaLogic != null) {
-            List<ReservaDTO> todasLasReservas = reservaLogic.getReservas();
+            try{
+                List<ReservaDTO> todasLasReservas = reservaLogic.getReservas();
 
-            for (ReservaDTO reserva : todasLasReservas) {
-                LocalDate fechaReserva = reserva.getFecha();
+                for (ReservaDTO reserva : todasLasReservas) {
+                    LocalDate fechaReserva = reserva.getFecha();
 
-                // Si la reserva entra en la semana que estamos mostrando (entre Lunes y Domingo)
-                if (!fechaReserva.isBefore(lunesSemana) && fechaReserva.isBefore(lunesSemana.plusDays(7))) {
+                    // Si la reserva entra en la semana que estamos mostrando (entre Lunes y Domingo)
+                    if (!fechaReserva.isBefore(lunesSemana) && fechaReserva.isBefore(lunesSemana.plusDays(7))) {
 
-                    int diaIndex = fechaReserva.getDayOfWeek().getValue() - 1; // Lunes = 0, Domingo = 6
-                    int horaInicio = reserva.getHora_init().getHour();
+                        int diaIndex = fechaReserva.getDayOfWeek().getValue() - 1;
+                        // saca el inicio y fin de la actividad
+                        int horaInicio = reserva.getHora_init().getHour();
+                        int horaFin = reserva.getHora_final().getHour();
 
-                    // Encontrar la fila correspondiente a esta hora
-                    for (FilaHorario fila : filas) {
-                        if (fila.getHora().startsWith(String.format("%02d", horaInicio))) {
-                            // Asumimos que FuncionarioDTO tiene algún getNombre(), ajusta según tu código
-                            String textoActividad = reserva.getActividad() + "\n(" + reserva.getFuncionario().getID() + ")";
-                            fila.setDia(diaIndex, textoActividad);
+                        String idFunc = (reserva.getFuncionario() != null) ? reserva.getFuncionario().getID() : "ID_Oculto";
+                        String textoActividad = reserva.getActividad() + "\n(" + idFunc + ")";
+
+                        for (FilaHorario fila : filas) {
+                            // Extraemos el número de la hora de la fila (ej. "08:00" -> 8)
+                            int horaFila = Integer.parseInt(fila.getHora().substring(0, 2));
+                            // Si la hora de la fila es mayor/igual al inicio y menor al fin, escribimos la actividad
+                            if (horaFila >= horaInicio && horaFila < horaFin) {
+                                fila.setDia(diaIndex, textoActividad);
+                            }
                         }
                     }
                 }
+            } catch (Exception e) {
+                // Si algo explota, ahora sí nos enteraremos con una alerta
+                mostrarAlerta("Ocurrió un error interno al leer las reservas: " + e.getMessage());
             }
         }
         tabActividades.setItems(filas);
