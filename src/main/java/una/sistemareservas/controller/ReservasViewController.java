@@ -12,6 +12,8 @@ import una.sistemareservas.dto.ReservaDTO;
 import una.sistemareservas.service.ReservaService;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
 import una.sistemareservas.service.CategoriaService;
+import una.sistemareservas.service.RecursoService;
+import una.sistemareservas.service.UsuarioService;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -55,6 +57,7 @@ public class ReservasViewController {
     private ReservaService reservaLogic;
     private CategoriaService categoriaLogic;
 
+
     public void setLogicas(ReservaService reservaLogic, CategoriaService categoriaLogic) {
         this.reservaLogic = reservaLogic;
         this.categoriaLogic = categoriaLogic;
@@ -63,6 +66,15 @@ public class ReservasViewController {
 
     @FXML
     public void initialize(){
+        this.categoriaLogic = new CategoriaService();
+        RecursoService recursoLogic = new RecursoService(categoriaLogic);
+        UsuarioService usuarioLogic = new UsuarioService();
+        try {
+            this.reservaLogic = new ReservaService(usuarioLogic, this.categoriaLogic, recursoLogic);
+        } catch (Exception e) {
+            // Si el archivo de reservas falla al cargar, mostramos el error sin que la app colapse
+            mostrarAlerta("Error al cargar los datos de reservas: " + e.getMessage());
+        }
         for (int h = 6; h < 22; h++) {
             String horaFormateada = String.format("%02d:00", h);
             cbHoraFinal.getItems().add(horaFormateada);
@@ -78,6 +90,8 @@ public class ReservasViewController {
                 setText(empty || item == null ? null : item.getDescripcion());
             }
         });
+
+        cargarDatosIniciales();
 
         // 4. Configurar las columnas de la tabla "Mis reservas"
         colIdReservas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getID()));
@@ -97,8 +111,8 @@ public class ReservasViewController {
 
         // 5. Asignar acciones a los botones
         btnGuardarReserva.setOnAction(e -> reservar());
-        //btnLimpiarReserva.setOnAction(e -> limpiarFormulario());
-        //btnCancelarReserva.setOnAction(e -> cancelarReserva());
+        btnLimpiarReserva.setOnAction(e -> limpiarFormulario());
+        btnCancelarReserva.setOnAction(e -> cancelarReserva());
 
 
     }
@@ -112,30 +126,79 @@ public class ReservasViewController {
 
     private void actualizarTablaReservas() {
         if (reservaLogic != null) {
-            List<ReservaDTO> misReservas = reservaLogic.listarPorFuncionario("FUNC-001");
+            String idFuncionario = una.sistemareservas.utilidades.SesionGlobal.getFuncionarioActual();
+            List<ReservaDTO> misReservas = reservaLogic.listarPorFuncionario(idFuncionario);
             ObservableList<ReservaDTO> listaObservable = FXCollections.observableArrayList(misReservas);
             tabMisReservas.setItems(listaObservable);
         }
     }
 
     private void reservar(){
-        String actividad = txtActividad.getText().trim();
-        LocalDate fecha = dtReservarFecha.getValue();
-        String horaInicioStr = cbHoraInicio.getValue();
-        String horaFinalStr = cbHoraFinal.getValue();
-        List<CategoriaRecursoDTO> categoriasSeleccionadas = lvListaCategorias.getSelectionModel().getSelectedItems();
-        if (horaInicioStr == null || horaFinalStr == null) {
-            lblAvisosReservas.setText("Debe seleccionar la hora de inicio y fin.");
+        try{
+            String actividad = txtActividad.getText().trim();
+            LocalDate fecha = dtReservarFecha.getValue();
+            String horaInicioStr = cbHoraInicio.getValue();
+            String horaFinalStr = cbHoraFinal.getValue();
+            List<CategoriaRecursoDTO> categoriasSeleccionadas = lvListaCategorias.getSelectionModel().getSelectedItems();
+            if (horaInicioStr == null || horaFinalStr == null) {
+                lblAvisosReservas.setText("Debe seleccionar la hora de inicio y fin.");
+                return;
+            }
+            // Convertir strings a LocalTime
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            LocalTime horaInicio = LocalTime.parse(horaInicioStr, formatter);
+            LocalTime horaFinal = LocalTime.parse(horaFinalStr, formatter);
+
+            String idFuncionario = una.sistemareservas.utilidades.SesionGlobal.getFuncionarioActual();
+            reservaLogic.reservar(idFuncionario, actividad, fecha, horaInicio, horaFinal, categoriasSeleccionadas);
+            lblAvisosReservas.setText("Reserva realizada con éxito.");
+            limpiarFormulario();
+            actualizarTablaReservas();
+
+        } catch (Exception ex) {
+            mostrarAlerta(ex.getMessage());
+        }
+    }
+
+    private void cancelarReserva() {
+        ReservaDTO seleccionada = tabMisReservas.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            mostrarAlerta("Debe seleccionar una reserva de la tabla para cancelar.");
             return;
         }
-        // Convertir strings a LocalTime
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime horaInicio = LocalTime.parse(horaInicioStr, formatter);
-        LocalTime horaFinal = LocalTime.parse(horaFinalStr, formatter);
 
-        //reservaLogic.reservar(, actividad, fecha, horaInicio, horaFinal, categoriasSeleccionadas);
+        try {
+            reservaLogic.cancelar(seleccionada.getID());
+            lblAvisosReservas.setText("La reserva ha sido cancelada.");
+            actualizarTablaReservas();
+        } catch (Exception ex) {
+            mostrarAlerta(ex.getMessage());
+        }
+    }
 
+    private void limpiarFormulario() {
+        txtActividad.clear();
+        dtReservarFecha.setValue(null);
+        cbHoraInicio.getSelectionModel().clearSelection();
+        cbHoraFinal.getSelectionModel().clearSelection();
+        lvListaCategorias.getSelectionModel().clearSelection();
+        txtPromptFrase.clear();
+    }
 
+    private void mostrarAlerta(String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Advertencia");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+    private void mostrarMensaje(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 
 }
