@@ -31,7 +31,6 @@ public class ActividadesViewController {
     @FXML private Button btnBuscarActividades;
     @FXML private Button btnImprimirActividades;
     @FXML private DatePicker dtActividadesFecha;
-    @FXML private Label lblAvisosActividades;
     @FXML private TableView<FilaHorario> tabActividades;
     @FXML private TableColumn<FilaHorario, String> colHoraActividades;
     @FXML private TableColumn<FilaHorario, String> colLunes;
@@ -134,7 +133,7 @@ public class ActividadesViewController {
         LocalDate fechaSeleccionada = dtActividadesFecha.getValue();
 
         if (fechaSeleccionada == null) {
-            lblAvisosActividades.setText("Por favor seleccione una fecha de referencia primero.");
+            mostrarAlerta("¡Debe seleccionar una fecha!");
             return;
         }
 

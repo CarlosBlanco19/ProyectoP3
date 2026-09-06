@@ -113,7 +113,7 @@ public class ReservasViewController {
         btnGuardarReserva.setOnAction(e -> reservar());
         btnLimpiarReserva.setOnAction(e -> limpiarFormulario());
         btnCancelarReserva.setOnAction(e -> cancelarReserva());
-
+        btnImprimirReservas.setOnAction(this::imprimirReservas);
 
     }
 
@@ -151,7 +151,7 @@ public class ReservasViewController {
 
             String idFuncionario = una.sistemareservas.utilidades.SesionGlobal.getFuncionarioActual();
             reservaLogic.reservar(idFuncionario, actividad, fecha, horaInicio, horaFinal, categoriasSeleccionadas);
-            lblAvisosReservas.setText("Reserva realizada con éxito.");
+            mostrarMensaje("Reserva realizada", "Reserva realizada con éxito.");
             limpiarFormulario();
             actualizarTablaReservas();
 
@@ -169,7 +169,7 @@ public class ReservasViewController {
 
         try {
             reservaLogic.cancelar(seleccionada.getID());
-            lblAvisosReservas.setText("La reserva ha sido cancelada.");
+            mostrarMensaje("Reserva cancelada", "La reserva ha sido cancelada.");
             actualizarTablaReservas();
         } catch (Exception ex) {
             mostrarAlerta(ex.getMessage());
@@ -183,6 +183,71 @@ public class ReservasViewController {
         cbHoraFinal.getSelectionModel().clearSelection();
         lvListaCategorias.getSelectionModel().clearSelection();
         txtPromptFrase.clear();
+    }
+
+    @FXML
+    private void imprimirReservas(ActionEvent event) {
+        // 1. Abrir ventana para que el usuario elija dónde guardar
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar Reporte de Mis Reservas");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
+        fileChooser.setInitialFileName("Reporte_Mis_Reservas.pdf");
+
+        File file = fileChooser.showSaveDialog(btnImprimirReservas.getScene().getWindow());
+
+        if (file != null) {
+            try {
+                // 2. Crear el documento en formato horizontal (apaisado)
+                Document documento = new Document(PageSize.A4.rotate());
+                PdfWriter.getInstance(documento, new FileOutputStream(file));
+
+                documento.open();
+                String idFuncionario = una.sistemareservas.utilidades.SesionGlobal.getFuncionarioActual();
+
+                // 3. Título y encabezado del PDF
+                documento.add(new Paragraph("Reporte de Mis Reservas"));
+                // Si implementaste la SesionGlobal, puedes poner el ID aquí:
+                documento.add(new Paragraph("Generado para el Funcionario ID: " + idFuncionario));
+                documento.add(new Paragraph(" ")); // Espacio en blanco
+
+                // 4. Crear tabla de iText con 6 columnas (igual a tu interfaz)
+                PdfPTable tablaPdf = new PdfPTable(6);
+                tablaPdf.setWidthPercentage(100);
+
+                // Configurar el color y texto de las cabeceras
+                String[] encabezados = {"Id", "Actividad", "Fecha", "Horario", "Recursos", "Estado"};
+                for (String encabezado : encabezados) {
+                    PdfPCell celda = new PdfPCell(new Phrase(encabezado));
+                    celda.setBackgroundColor(new com.itextpdf.text.BaseColor(200, 200, 200));
+                    tablaPdf.addCell(celda);
+                }
+
+                // 5. Extraer los datos de tabMisReservas fila por fila
+                for (ReservaDTO reserva : tabMisReservas.getItems()) {
+                    tablaPdf.addCell(reserva.getID());
+                    tablaPdf.addCell(reserva.getActividad());
+                    tablaPdf.addCell(reserva.getFecha().toString());
+                    tablaPdf.addCell(reserva.getHora_init() + " - " + reserva.getHora_final());
+
+                    // Extraemos los IDs de los recursos igual que en el TableColumn
+                    String recursosIds = reserva.getRecursos().stream()
+                            .map(RecursoDTO::getID)
+                            .collect(Collectors.joining(", "));
+
+                    tablaPdf.addCell(recursosIds.isEmpty() ? "Ninguno" : recursosIds);
+                    tablaPdf.addCell(reserva.getEstado().toString());
+                }
+
+                // 6. Añadir tabla y cerrar documento
+                documento.add(tablaPdf);
+                documento.close();
+
+                mostrarMensaje("Éxito", "¡El reporte PDF se ha guardado exitosamente!");
+
+            } catch (Exception e) {
+                mostrarAlerta("Ocurrió un error al generar el PDF: " + e.getMessage());
+            }
+        }
     }
 
     private void mostrarAlerta(String mensaje) {
