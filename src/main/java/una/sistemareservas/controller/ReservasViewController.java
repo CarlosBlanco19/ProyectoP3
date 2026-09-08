@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import una.sistemareservas.dto.RecursoDTO;
 import una.sistemareservas.dto.ReservaDTO;
+import una.sistemareservas.dto.UsuarioDTO;
 import una.sistemareservas.service.ReservaService;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
 import una.sistemareservas.service.CategoriaService;
@@ -56,13 +57,7 @@ public class ReservasViewController {
 
     private ReservaService reservaLogic;
     private CategoriaService categoriaLogic;
-
-
-    public void setLogicas(ReservaService reservaLogic, CategoriaService categoriaLogic) {
-        this.reservaLogic = reservaLogic;
-        this.categoriaLogic = categoriaLogic;
-        cargarDatosIniciales();
-    }
+    //UsuarioDTO usuario = LogInViewController.usuarioLogueado;
 
     @FXML
     public void initialize(){
@@ -91,8 +86,6 @@ public class ReservasViewController {
             }
         });
 
-        cargarDatosIniciales();
-
         // 4. Configurar las columnas de la tabla "Mis reservas"
         colIdReservas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getID()));
         colActividadReservas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getActividad()));
@@ -115,6 +108,7 @@ public class ReservasViewController {
         btnCancelarReserva.setOnAction(e -> cancelarReserva());
         btnImprimirReservas.setOnAction(this::imprimirReservas);
 
+        cargarDatosIniciales();
     }
 
     private void cargarDatosIniciales() {
@@ -154,7 +148,6 @@ public class ReservasViewController {
             mostrarMensaje("Reserva realizada", "Reserva realizada con éxito.");
             limpiarFormulario();
             actualizarTablaReservas();
-
         } catch (Exception ex) {
             mostrarAlerta(ex.getMessage());
         }
@@ -265,5 +258,4 @@ public class ReservasViewController {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
-
 }

@@ -1,0 +1,17 @@
+[
+  {
+    "descripcion": "HP basica",
+    "id": "HP-1",
+    "categoriaId": "LPT"
+  },
+  {
+    "descripcion": "Conexión de microfono y altavoz para sala de expo",
+    "id": "ALT-1",
+    "categoriaId": "ATV"
+  },
+  {
+    "descripcion": "Leo mesi",
+    "id": "PR",
+    "categoriaId": "STE"
+  }
+]

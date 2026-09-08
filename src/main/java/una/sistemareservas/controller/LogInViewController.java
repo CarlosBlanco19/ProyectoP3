@@ -42,8 +42,8 @@ public class LogInViewController {
 
         if(usuario != null){
             usuarioLogueado = usuario;
-            NavegadorPantallas.cambiarPantalla(evento, "/ui/MenuPrincipalView.fxml");
             una.sistemareservas.utilidades.SesionGlobal.setFuncionarioActual(usuario.getID());
+            NavegadorPantallas.cambiarPantalla(evento, "/ui/MenuPrincipalView.fxml");
         }else{
             lblAviso.setText("Usuario o contraseña incorrectos");
         }

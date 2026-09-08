@@ -1,0 +1,35 @@
+[
+  {
+    "clave": "1234",
+    "id": "admin",
+    "rol": "ADMINISTRADOR"
+  },
+  {
+    "clave": "1234",
+    "id": "ISS",
+    "telefono": "11112222",
+    "nombre": "Carlos",
+    "rol": "FUNCIONARIO"
+  },
+  {
+    "clave": "ISS-1",
+    "id": "ISS-1",
+    "telefono": "22223333",
+    "nombre": "Anthony",
+    "rol": "FUNCIONARIO"
+  },
+  {
+    "clave": "ISS-2",
+    "id": "ISS-2",
+    "telefono": "88889999",
+    "nombre": "Juan",
+    "rol": "FUNCIONARIO"
+  },
+  {
+    "clave": "CEO",
+    "id": "CEO",
+    "telefono": "99990000",
+    "nombre": "Deivert",
+    "rol": "FUNCIONARIO"
+  }
+]

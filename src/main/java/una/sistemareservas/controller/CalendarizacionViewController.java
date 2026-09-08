@@ -46,8 +46,7 @@ public class CalendarizacionViewController {
     private final RecursoService recursoService   = new RecursoService(categoriaService);
 
     @FXML
-    private void initialialize(){
-        btnBuscarCalendarizacion.setOnAction(this::buscarCalendarizacion);
+    private void initialize(){
 
         //construccion con exception
         try{
@@ -62,18 +61,18 @@ public class CalendarizacionViewController {
 
         cbCategoriaCalendarizacion.setItems(FXCollections.observableArrayList(categoriaService.listar()));
 
+        btnBuscarCalendarizacion.setOnAction(this::buscarCalendarizacion);
     }
 
 
 
     private void defColumna(List<RecursoDTO> recursos){
-
-        //limpia toda ddata excepto horas
+        //limpia toda data excepto horas
         tabCalendarizacion.getColumns().setAll(colHoraCalendarizacion);
 
         for(RecursoDTO recurso : recursos){
-            TableColumn<Map<String,String>, String> colRecurso = new TableColumn<>(recurso.getDescripcion());
-            colRecurso.setCellValueFactory(celDato -> new SimpleStringProperty(celDato.getValue().get(recurso.getDescripcion())));
+            TableColumn<Map<String,String>, String> colRecurso = new TableColumn<>(recurso.getID());
+            colRecurso.setCellValueFactory(celDato -> new SimpleStringProperty(celDato.getValue().get(recurso.getID())));
             tabCalendarizacion.getColumns().add(colRecurso);
         }
     }
@@ -90,8 +89,6 @@ public class CalendarizacionViewController {
 
                 return reserva.getActividad() + "-" + reserva.getFuncionario().getNombre();
             }
-
-
         }
         return "";
     }
@@ -101,20 +98,20 @@ public class CalendarizacionViewController {
         ObservableList<Map<String, String>> filas = FXCollections.observableArrayList();
 
         //se arma una fila por cada hora
-        for(int hora = 7; hora <= 23; hora++){
+        for(int hora = 7; hora <= 23; hora++) {
 
             LocalTime tActual = LocalTime.of(hora, 0);
-            Map<String,String> fila = new HashMap<>();
+            Map<String, String> fila = new HashMap<>();
             fila.put("hora", String.format("%02d:00", hora));
 
             //por cada recurso hay una entrada
             //trae el texto de la celda (recurso, hora o fecha)
-            for(RecursoDTO recurso : recursos){
-                fila.put(recurso.getID(), txtCelda(recurso,time, tActual));
+            for (RecursoDTO recurso : recursos) {
+                fila.put(recurso.getID(), txtCelda(recurso, time, tActual));
             }
-
             filas.add(fila);
         }
+        tabCalendarizacion.setItems(filas);
     }
 
 
@@ -132,8 +129,8 @@ public class CalendarizacionViewController {
             return;
         }
 
-        List<RecursoDTO> recuross= recursoService.listarPorCategoria(categoria.getID());
-        defColumna(recuross);
-        defFila(fecha,recuross);
+        List<RecursoDTO> recursos= recursoService.listarPorCategoria(categoria.getID());
+        defColumna(recursos);
+        defFila(fecha,recursos);
     }
 }
