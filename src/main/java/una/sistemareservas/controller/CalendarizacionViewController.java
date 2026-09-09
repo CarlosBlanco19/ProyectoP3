@@ -1,6 +1,5 @@
 package una.sistemareservas.controller;
 
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,7 +15,6 @@ import una.sistemareservas.service.CategoriaService;
 import una.sistemareservas.service.RecursoService;
 import una.sistemareservas.service.ReservaService;
 import una.sistemareservas.service.UsuarioService;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -69,7 +67,7 @@ public class CalendarizacionViewController {
         for(RecursoDTO recurso : recursos){
             TableColumn<Map<String,String>, String> colRecurso = new TableColumn<>(recurso.getID());
             colRecurso.setCellValueFactory(celDato -> new SimpleStringProperty(celDato.getValue().get(recurso.getID())));
-            //Esto es para colorear las columnas.
+            //Esto es para colorear las celdas.
             colRecurso.setCellFactory(columna -> new javafx.scene.control.TableCell<>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
@@ -91,7 +89,7 @@ public class CalendarizacionViewController {
 
     private String txtCelda(RecursoDTO recurso, LocalDate date, LocalTime hora){
         for(ReservaDTO reserva : reservaService.getReservas()){
-            //descarta inactivas, distintas fechas y recursos
+            //quita inactivas, distintas fechas y recursos
             if(reserva.getEstado() != EstadoReserva.ACTIVA){continue;}
             if(!reserva.getFecha().equals(date)){continue;}
             if(!reserva.getRecursos().contains(recurso)){continue;}
@@ -148,12 +146,12 @@ public class CalendarizacionViewController {
 
     @FXML
     private void imprimirCalendarizacion(ActionEvent event) {
-        // Validamos que haya datos cargados
+        // tira exception si no hay data cargada.
         if (dtCalendarizacion.getValue() == null || tabCalendarizacion.getItems().isEmpty()) {
             mostrarMensaje("Advertencia", "Debe buscar una calendarización antes de imprimir.");
             return;
         }
-
+        //Esto es para que le salga para ver donde guardar el archivo y con que nombre en la com´pu.
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
         fileChooser.setTitle("Guardar Reporte de Calendarización");
         fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));

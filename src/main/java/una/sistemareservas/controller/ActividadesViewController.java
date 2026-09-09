@@ -4,17 +4,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.cell.PropertyValueFactory;
 import una.sistemareservas.dto.ReservaDTO;
 import una.sistemareservas.service.ReservaService;
 import javafx.beans.property.SimpleStringProperty;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
@@ -70,7 +67,7 @@ public class ActividadesViewController {
 
             if (columnaActual != null) {
                 columnaActual.setCellValueFactory(cellData -> cellData.getValue().diaProperty(index));
-                // 2. NUEVO: Reglas de estilo y color
+                // Reglas de estilo y color para las celdas.
                 columnaActual.setCellFactory(columna -> new TableCell<>() {
                     @Override
                     protected void updateItem(String item, boolean empty) {
@@ -81,7 +78,6 @@ public class ActividadesViewController {
                         } else {
                             // Si hay una actividad
                             setText(item);
-                            // Aplicamos el fondo amarillo claro, un borde y texto centrado (estilo CSS)
                             setStyle("-fx-background-color: #fff2cc; -fx-border-color: lightgray; -fx-border-width: 0.5px; -fx-alignment: center;");
                         }
                     }
@@ -162,18 +158,18 @@ public class ActividadesViewController {
             return;
         }
 
-        // 1. Obtener el lunes de la semana seleccionada
+        //Obtiene el lunes de la semana seleccionada
         LocalDate lunesSemana = fechaSeleccionada.with(DayOfWeek.MONDAY);
         actualizarCabecerasColumnas(lunesSemana);
 
-        // 2. Generar las filas base (ej. de 06:00 a 22:00)
+        //Genera las filas base
         ObservableList<FilaHorario> filas = FXCollections.observableArrayList();
         for (int hora = 6; hora <= 22; hora++) {
             String horaStr = String.format("%02d:00", hora);
             filas.add(new FilaHorario(horaStr));
         }
 
-        // 3. Poblar las celdas con las reservas de la lógica
+        //Poblar las celdas con las reservas de la lógica
         if (reservaLogic != null) {
             try{
                 List<ReservaDTO> todasLasReservas = reservaLogic.getReservas();
@@ -203,7 +199,6 @@ public class ActividadesViewController {
                     }
                 }
             } catch (Exception e) {
-                // Si algo explota, ahora sí nos enteraremos con una alerta
                 mostrarAlerta("Ocurrió un error interno al leer las reservas: " + e.getMessage());
             }
         }
