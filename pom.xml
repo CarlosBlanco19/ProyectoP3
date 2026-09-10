@@ -56,7 +56,6 @@
                 <configuration>
                     <mainClass>una.sistemareservas.App</mainClass>
                 </configuration>
-
             </plugin>
         </plugins>
     </build>
