@@ -1,0 +1,22 @@
+[
+  {
+    "descripcion": "Laptop-hp",
+    "id": "LPT"
+  },
+  {
+    "descripcion": "Altavoz y Microfono",
+    "id": "ATV"
+  },
+  {
+    "descripcion": "prueba",
+    "id": "STE"
+  },
+  {
+    "descripcion": "PRUEBA2",
+    "id": "PRB"
+  },
+  {
+    "descripcion": "FUEGO",
+    "id": "HP"
+  }
+]

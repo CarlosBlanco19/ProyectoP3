@@ -50,9 +50,6 @@ public class CategoriasViewController {
             }
         });
 
-
-
-
         btnBuscarCategoria.setOnAction((this::buscar));
         btnBorrarCategoria.setOnAction((this::borrar));
         btnGuardarCategoria.setOnAction((this::guardar));
@@ -110,8 +107,6 @@ public class CategoriasViewController {
         }else{
             lblAvisos.setText("No se guardó la categoría");
         }
-
-
     }
 
     //limpia avisos, listas de catalogos

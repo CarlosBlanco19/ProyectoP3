@@ -1,0 +1,112 @@
+[
+  {
+    "fecha": "2026-09-06",
+    "hora_init": "13:00",
+    "estado": "CANCELADA",
+    "hora_final": "14:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000001",
+    "recursoIds": [],
+    "categoriaIds": ["ATV"],
+    "actividad": "torneo de aura"
+  },
+  {
+    "fecha": "2026-09-07",
+    "hora_init": "07:00",
+    "estado": "ACTIVA",
+    "hora_final": "12:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000002",
+    "recursoIds": ["HP-1"],
+    "categoriaIds": ["LPT"],
+    "actividad": "PRUEBA"
+  },
+  {
+    "fecha": "2026-09-07",
+    "hora_init": "09:00",
+    "estado": "ACTIVA",
+    "hora_final": "12:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000003",
+    "recursoIds": ["PR"],
+    "categoriaIds": ["STE"],
+    "actividad": "PRUEBA"
+  },
+  {
+    "fecha": "2026-09-12",
+    "hora_init": "08:00",
+    "estado": "ACTIVA",
+    "hora_final": "11:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000004",
+    "recursoIds": ["ALT-1"],
+    "categoriaIds": ["ATV"],
+    "actividad": "asd"
+  },
+  {
+    "fecha": "2026-09-02",
+    "hora_init": "08:00",
+    "estado": "ACTIVA",
+    "hora_final": "09:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000005",
+    "recursoIds": ["ALT-1"],
+    "categoriaIds": ["ATV"],
+    "actividad": "FUEGO"
+  },
+  {
+    "fecha": "2026-09-04",
+    "hora_init": "07:00",
+    "estado": "ACTIVA",
+    "hora_final": "09:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000006",
+    "recursoIds": ["PR"],
+    "categoriaIds": ["STE"],
+    "actividad": "DGDG"
+  },
+  {
+    "fecha": "2026-09-01",
+    "hora_init": "07:00",
+    "estado": "ACTIVA",
+    "hora_final": "08:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000007",
+    "recursoIds": ["ALT-1"],
+    "categoriaIds": ["ATV"],
+    "actividad": "H"
+  },
+  {
+    "fecha": "2026-09-24",
+    "hora_init": "06:00",
+    "estado": "ACTIVA",
+    "hora_final": "13:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000008",
+    "recursoIds": ["ALT-1"],
+    "categoriaIds": ["ATV"],
+    "actividad": "FIREBOL"
+  },
+  {
+    "fecha": "2026-09-11",
+    "hora_init": "08:00",
+    "estado": "ACTIVA",
+    "hora_final": "09:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000009",
+    "recursoIds": ["ALT-1"],
+    "categoriaIds": ["ATV"],
+    "actividad": "FUEGO"
+  },
+  {
+    "fecha": "2026-09-07",
+    "hora_init": "13:00",
+    "estado": "ACTIVA",
+    "hora_final": "19:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000010",
+    "recursoIds": ["HP-1"],
+    "categoriaIds": ["LPT"],
+    "actividad": "fIREBOL"
+  }
+]

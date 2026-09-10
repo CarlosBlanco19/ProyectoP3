@@ -1,20 +1,11 @@
 package una.sistemareservas.controller;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.FileChooser;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
 import una.sistemareservas.dto.EstadoReserva;
 import una.sistemareservas.dto.RecursoDTO;
@@ -24,9 +15,6 @@ import una.sistemareservas.service.CategoriaService;
 import una.sistemareservas.service.RecursoService;
 import una.sistemareservas.service.ReservaService;
 import una.sistemareservas.service.UsuarioService;
-
-import java.io.File;
-import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -52,7 +40,6 @@ public class CalendarizacionViewController {
 
     @FXML
     private void initialize(){
-        btnBuscarCalendarizacion.setOnAction(this::buscarCalendarizacion);
 
         //construccion con exception
         try{
@@ -67,25 +54,42 @@ public class CalendarizacionViewController {
 
         cbCategoriaCalendarizacion.setItems(FXCollections.observableArrayList(categoriaService.listar()));
 
+        btnBuscarCalendarizacion.setOnAction(this::buscarCalendarizacion);
+        btnImprimirCalendarizacion.setOnAction(this::imprimirCalendarizacion);
     }
 
 
 
     private void defColumna(List<RecursoDTO> recursos){
-
-        //limpia toda ddata excepto horas
+        //limpia toda data excepto horas
         tabCalendarizacion.getColumns().setAll(colHoraCalendarizacion);
 
         for(RecursoDTO recurso : recursos){
             TableColumn<Map<String,String>, String> colRecurso = new TableColumn<>(recurso.getID());
             colRecurso.setCellValueFactory(celDato -> new SimpleStringProperty(celDato.getValue().get(recurso.getID())));
+            //Esto es para colorear las celdas.
+            colRecurso.setCellFactory(columna -> new javafx.scene.control.TableCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null || item.trim().isEmpty()) {
+                        setText("");
+                        setStyle(""); // Blanco por defecto
+                    } else {
+                        setText(item);
+                        // Fondo amarillo pastel, igual al de la imagen
+                        setStyle("-fx-background-color: #fff2cc; -fx-border-color: lightgray; -fx-border-width: 0.5px; -fx-alignment: center-left;");
+                    }
+                }
+            });
+
             tabCalendarizacion.getColumns().add(colRecurso);
         }
     }
 
     private String txtCelda(RecursoDTO recurso, LocalDate date, LocalTime hora){
         for(ReservaDTO reserva : reservaService.getReservas()){
-            //descarta inactivas, distintas fechas y recursos
+            //quita inactivas, distintas fechas y recursos
             if(reserva.getEstado() != EstadoReserva.ACTIVA){continue;}
             if(!reserva.getFecha().equals(date)){continue;}
             if(!reserva.getRecursos().contains(recurso)){continue;}
@@ -95,8 +99,6 @@ public class CalendarizacionViewController {
 
                 return reserva.getActividad() + "-" + reserva.getFuncionario().getNombre();
             }
-
-
         }
         return "";
     }
@@ -106,18 +108,17 @@ public class CalendarizacionViewController {
         ObservableList<Map<String, String>> filas = FXCollections.observableArrayList();
 
         //se arma una fila por cada hora
-        for(int hora = 7; hora <= 23; hora++){
+        for(int hora = 7; hora <= 23; hora++) {
 
             LocalTime tActual = LocalTime.of(hora, 0);
-            Map<String,String> fila = new HashMap<>();
+            Map<String, String> fila = new HashMap<>();
             fila.put("hora", String.format("%02d:00", hora));
 
             //por cada recurso hay una entrada
             //trae el texto de la celda (recurso, hora o fecha)
-            for(RecursoDTO recurso : recursos){
-                fila.put(recurso.getID(), txtCelda(recurso,time, tActual));
+            for (RecursoDTO recurso : recursos) {
+                fila.put(recurso.getID(), txtCelda(recurso, time, tActual));
             }
-
             filas.add(fila);
         }
         tabCalendarizacion.setItems(filas);
@@ -138,72 +139,76 @@ public class CalendarizacionViewController {
             return;
         }
 
-        List<RecursoDTO> recuross= recursoService.listarPorCategoria(categoria.getID());
-        defColumna(recuross);
-        defFila(fecha,recuross);
+        List<RecursoDTO> recursos= recursoService.listarPorCategoria(categoria.getID());
+        defColumna(recursos);
+        defFila(fecha,recursos);
     }
-    /*
 
-    private void setBtnImprimirCalendarizacion(ActionEvent event){
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Guardar Reporte de Actividades");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
+    @FXML
+    private void imprimirCalendarizacion(ActionEvent event) {
+        // tira exception si no hay data cargada.
+        if (dtCalendarizacion.getValue() == null || tabCalendarizacion.getItems().isEmpty()) {
+            mostrarMensaje("Advertencia", "Debe buscar una calendarización antes de imprimir.");
+            return;
+        }
+        //Esto es para que le salga para ver donde guardar el archivo y con que nombre en la com´pu.
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Guardar Reporte de Calendarización");
+        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
+        fileChooser.setInitialFileName("Calendarizacion_" + dtCalendarizacion.getValue() + ".pdf");
 
-        fileChooser.setInitialFileName("Reporte_Actividades_" + dtCalendarizacion.getValue() + ".pdf");
-
-        File file = fileChooser.showSaveDialog(btnImprimirCalendarizacion.getScene().getWindow());
+        java.io.File file = fileChooser.showSaveDialog(btnImprimirCalendarizacion.getScene().getWindow());
 
         if (file != null) {
             try {
-                Document documento = new Document(PageSize.A4);
-                PdfWriter.getInstance(documento, new FileOutputStream(file));
+                com.itextpdf.text.Document documento = new com.itextpdf.text.Document(com.itextpdf.text.PageSize.A4.rotate());
+                com.itextpdf.text.pdf.PdfWriter.getInstance(documento, new java.io.FileOutputStream(file));
                 documento.open();
 
-                documento.add(new Paragraph("Reporte de Caledarizacion"));
-                documento.add(new Paragraph("Fecha de referencia: " + dtCalendarizacion.getValue()));
-                documento.add(new Paragraph(" ")); // Espacio en blanco
+                // Títulos del PDF
+                documento.add(new com.itextpdf.text.Paragraph("Reporte de Calendarizacion de Recursos"));
+                documento.add(new com.itextpdf.text.Paragraph("Fecha: " + dtCalendarizacion.getValue() + " | Categoria: " + cbCategoriaCalendarizacion.getValue().getDescripcion()));
+                documento.add(new com.itextpdf.text.Paragraph(" "));
 
-                // 4. Crea la tabla ahi
-                PdfPTable tablaPdf = new PdfPTable(8);
+                // Cuantas columnas tenga la tabla en JavaFX, tendrá la del PDF
+                int numColumnas = tabCalendarizacion.getColumns().size();
+                com.itextpdf.text.pdf.PdfPTable tablaPdf = new com.itextpdf.text.pdf.PdfPTable(numColumnas);
                 tablaPdf.setWidthPercentage(100);
 
-                // le pone titulos a las columnas
-                String[] encabezados = {"Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
-                for (String encabezado : encabezados) {
-                    PdfPCell celda = new PdfPCell(new Phrase(encabezado));
-                    celda.setBackgroundColor(new com.itextpdf.text.BaseColor(200, 200, 200)); // Fondo gris claro
+                // 1. Imprimir encabezados
+                for (TableColumn<Map<String, String>, ?> col : tabCalendarizacion.getColumns()) {
+                    com.itextpdf.text.pdf.PdfPCell celda = new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(col.getText()));
+                    celda.setBackgroundColor(new com.itextpdf.text.BaseColor(200, 200, 200));
                     tablaPdf.addCell(celda);
                 }
 
-                // 5. Recorre las filas de la tabla de JavaFX y agrega los datos a la tabla PDF
-                for (CalendarizacionViewController.map fila : tabCalendarizacion.getItems()) {
-                    tablaPdf.addCell(fila.getHora());
+                // 2. Imprimir contenido fila por fila
+                for (Map<String, String> fila : tabCalendarizacion.getItems()) {
+                    for (TableColumn<Map<String, String>, ?> col : tabCalendarizacion.getColumns()) {
+                        // Comprobamos si es la columna de "Hora" o una de recurso
+                        String key = (col == colHoraCalendarizacion) ? "hora" : col.getText();
+                        String valor = fila.get(key);
 
-                    for (int i = 0; i < 7; i++) {
-                        String textoActividad = fila.getDia(i);
-                        // Si está vacío, ponemos un espacio para que la celda se dibuje bien
-                        tablaPdf.addCell(textoActividad.isEmpty() ? " " : textoActividad);
+                        tablaPdf.addCell(valor == null || valor.isEmpty() ? " " : valor);
                     }
                 }
 
                 documento.add(tablaPdf);
                 documento.close();
 
-                mostrarAlerta("¡El reporte PDF se ha guardado exitosamente!");
+                mostrarMensaje("Éxito", "¡Reporte PDF generado exitosamente!");
 
             } catch (Exception e) {
-                e.printStackTrace();
-                mostrarAlerta("Ocurrió un error al generar el PDF: " + e.getMessage());
+                mostrarMensaje("Error", "Error al guardar el PDF: " + e.getMessage());
             }
         }
     }
-    private void mostrarAlerta(String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Advertencia");
+
+    private void mostrarMensaje(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
-
-     */
 }

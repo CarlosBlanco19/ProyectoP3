@@ -14,13 +14,11 @@ import una.sistemareservas.dto.CategoriaRecursoDTO;
 import una.sistemareservas.service.CategoriaService;
 import una.sistemareservas.service.RecursoService;
 import una.sistemareservas.service.UsuarioService;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
@@ -56,13 +54,7 @@ public class ReservasViewController {
 
     private ReservaService reservaLogic;
     private CategoriaService categoriaLogic;
-
-
-    public void setLogicas(ReservaService reservaLogic, CategoriaService categoriaLogic) {
-        this.reservaLogic = reservaLogic;
-        this.categoriaLogic = categoriaLogic;
-        cargarDatosIniciales();
-    }
+    //UsuarioDTO usuario = LogInViewController.usuarioLogueado;
 
     @FXML
     public void initialize(){
@@ -91,8 +83,6 @@ public class ReservasViewController {
             }
         });
 
-        cargarDatosIniciales();
-
         // 4. Configurar las columnas de la tabla "Mis reservas"
         colIdReservas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getID()));
         colActividadReservas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getActividad()));
@@ -115,6 +105,7 @@ public class ReservasViewController {
         btnCancelarReserva.setOnAction(e -> cancelarReserva());
         btnImprimirReservas.setOnAction(this::imprimirReservas);
 
+        cargarDatosIniciales();
     }
 
     private void cargarDatosIniciales() {
@@ -154,7 +145,6 @@ public class ReservasViewController {
             mostrarMensaje("Reserva realizada", "Reserva realizada con éxito.");
             limpiarFormulario();
             actualizarTablaReservas();
-
         } catch (Exception ex) {
             mostrarAlerta(ex.getMessage());
         }
@@ -265,5 +255,4 @@ public class ReservasViewController {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
-
 }
