@@ -31,4 +31,8 @@ public class FuncionarioService {
     public boolean eliminar(String id) {
         return funcionarioLogic.eliminar(id);
     }
+
+    public boolean actualizar(String id, String nom, String tel){
+        return funcionarioLogic.actualizar(id, nom, tel);
+    }
 }

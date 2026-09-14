@@ -1,6 +1,7 @@
 package una.sistemareservas.logic;
 
 import una.sistemareservas.datos.RecursoDatos;
+import una.sistemareservas.dto.CategoriaRecursoDTO;
 import una.sistemareservas.dto.RecursoDTO;
 import una.sistemareservas.utilidades.Busqueda;
 
@@ -43,6 +44,19 @@ public class RecursoLogic {
             return false;
         }
         recursos.add(recurso);
+        guardar();
+        return true;
+    }
+
+    public boolean actualizar(String id, String desc, CategoriaRecursoDTO cat){
+        RecursoDTO recurso = buscarID(id);
+
+        if(recurso == null){
+            return false;
+        }
+
+        recurso.setCategoria(cat);
+        recurso.setDescripcion(desc);
         guardar();
         return true;
     }

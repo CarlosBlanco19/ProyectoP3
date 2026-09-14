@@ -1,5 +1,6 @@
 package una.sistemareservas.service;
 
+import una.sistemareservas.dto.CategoriaRecursoDTO;
 import una.sistemareservas.logic.RecursoLogic;
 import una.sistemareservas.dto.RecursoDTO;
 
@@ -31,5 +32,9 @@ public class RecursoService {
     }
     public RecursoLogic logic() {
         return recursoLogic;
+    }
+
+    public boolean actualizar(String id, String desc, CategoriaRecursoDTO cat){
+        return recursoLogic.actualizar(id, desc, cat);
     }
 }

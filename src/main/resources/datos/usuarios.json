@@ -7,8 +7,8 @@
   {
     "clave": "1234",
     "id": "ISS",
-    "telefono": "11112222",
-    "nombre": "Carlos",
+    "telefono": "55557790",
+    "nombre": "Carlos A",
     "rol": "FUNCIONARIO"
   },
   {
@@ -28,7 +28,7 @@
   {
     "clave": "CEO",
     "id": "CEO",
-    "telefono": "99990000",
+    "telefono": "22320023",
     "nombre": "Deivert",
     "rol": "FUNCIONARIO"
   }

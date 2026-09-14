@@ -1,19 +1,30 @@
 package una.sistemareservas.controller;
 
-import javafx.beans.property.SimpleStringProperty;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
 import una.sistemareservas.dto.RecursoDTO;
+import una.sistemareservas.dto.ReservaDTO;
 import una.sistemareservas.service.CategoriaService;
 import una.sistemareservas.service.RecursoService;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RecursosViewController {
     @FXML private ComboBox<CategoriaRecursoDTO> cbBusquedaCategoriaRecursos;
@@ -46,6 +57,7 @@ public class RecursosViewController {
         btnBuscarRecursos.setOnAction(this::buscar);
         btnGuardarRecursos.setOnAction(this::guardar);
         btnLimpiarRecursos.setOnAction(evento-> limpiar());
+        btnImprimirRecursos.setOnAction(this::imprimirRecursos);
 
         //debo de implementar esto asi para no incluir mas metodos innecesarios en dto
         colCategoriaRecursos.setCellValueFactory(datos ->new javafx.beans.property.SimpleStringProperty(datos.getValue().getCategoria()
@@ -99,18 +111,21 @@ public class RecursosViewController {
             return;
         }
 
+        boolean pt;
+
         if(recursoService.buscarID(id) != null){
-            lblAvisos.setText("Ya existe un recurso con ese ID");
-            return;
+            pt = recursoService.actualizar(id, desc, cat);
+        }else {
+
+            RecursoDTO recurso = new RecursoDTO(id, desc, cat);
+            pt = recursoService.agregar(recurso);
         }
 
-        RecursoDTO recurso = new RecursoDTO(id, desc, cat);
-
-        if(recursoService.agregar(recurso)){
+        if(pt){
             cargarTabla(recursoService.listar());
             limpiar();
         }else{
-            lblAvisos.setText("Error al agregar el recurso");
+            lblAvisos.setText("Error al agregar/actualizar el recurso");
         }
     }
 
@@ -164,5 +179,60 @@ public class RecursosViewController {
             res = resultadoFiltrado;
         }
         cargarTabla(res);
+    }
+
+    @FXML
+    private void imprimirRecursos(ActionEvent event) {
+        // 1. Abrir ventana para que el usuario elija dónde guardar
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar Reporte de Recursos");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
+        fileChooser.setInitialFileName("Reporte_Recursos.pdf");
+
+        File file = fileChooser.showSaveDialog(btnImprimirRecursos.getScene().getWindow());
+
+        if (file != null) {
+            try {
+                // 2. Crear el documento en formato horizontal (apaisado)
+                Document documento = new Document(PageSize.A4.rotate());
+                PdfWriter.getInstance(documento, new FileOutputStream(file));
+
+                documento.open();
+
+                // 3. Título y encabezado del PDF
+                documento.add(new Paragraph("Reporte de Recursos"));
+                // Si implementaste la SesionGlobal, puedes poner el ID aquí:
+                documento.add(new Paragraph(" ")); // Espacio en blanco
+
+                // 4. Crear tabla de iText con 6 columnas (igual a tu interfaz)
+                PdfPTable tablaPdf = new PdfPTable(3);
+                tablaPdf.setWidthPercentage(100);
+
+                // Configurar el color y texto de las cabeceras
+                String[] encabezados = {"Id", "Categoria", "Descripcion"};
+                for (String encabezado : encabezados) {
+                    PdfPCell celda = new PdfPCell(new Phrase(encabezado));
+                    celda.setBackgroundColor(new com.itextpdf.text.BaseColor(200, 200, 200));
+                    tablaPdf.addCell(celda);
+                }
+
+                // 5. Extraer los datos de tabMisReservas fila por fila
+                for (RecursoDTO recurso : tabRecursos.getItems()) {
+                    tablaPdf.addCell(recurso.getID());
+                    tablaPdf.addCell(recurso.getCategoria().toString());
+                    tablaPdf.addCell(recurso.getDescripcion());
+
+                }
+
+                // 6. Añadir tabla y cerrar documento
+                documento.add(tablaPdf);
+                documento.close();
+
+                lblAvisos.setText("¡El reporte PDF se ha guardado exitosamente!");
+
+            } catch (Exception e) {
+                lblAvisos.setText("Ocurrió un error al generar el PDF: " + e.getMessage());
+            }
+        }
     }
 }
