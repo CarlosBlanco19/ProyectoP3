@@ -114,8 +114,6 @@ public class FuncionariosViewController {
             lblAvisos.setText("Ingrese un ID o Nombre");
             cargarTabla(funcionarioService.listar());
         }
-
-
     }
 
 

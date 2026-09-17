@@ -1,5 +1,6 @@
 package una.sistemareservas.controller;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -7,13 +8,15 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.*;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import una.sistemareservas.dto.RecursoDTO;
 import una.sistemareservas.dto.ReservaDTO;
-import una.sistemareservas.service.ReservaService;
+import una.sistemareservas.exception.ReservaException;
+import una.sistemareservas.service.*;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
-import una.sistemareservas.service.CategoriaService;
-import una.sistemareservas.service.RecursoService;
-import una.sistemareservas.service.UsuarioService;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -55,6 +58,8 @@ public class ReservasViewController {
     private ReservaService reservaLogic;
     private CategoriaService categoriaLogic;
     //UsuarioDTO usuario = LogInViewController.usuarioLogueado;
+
+    GeminiService geminiService;
 
     @FXML
     public void initialize(){
@@ -104,6 +109,7 @@ public class ReservasViewController {
         btnLimpiarReserva.setOnAction(e -> limpiarFormulario());
         btnCancelarReserva.setOnAction(e -> cancelarReserva());
         btnImprimirReservas.setOnAction(this::imprimirReservas);
+        btnExtraerIA.setOnAction(e -> reservarConIA());
 
         cargarDatosIniciales();
     }
@@ -254,5 +260,107 @@ public class ReservasViewController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    private String construirPromptIA(String promptUsuario) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("Eres un asistente de inteligencia artificial que extrae datos de una reserva de espacios y recursos\n");
+        prompt.append("Para las categoriaRecurso, solo puedes usar los nombres exactos que aparezcan en lalista de categorias disponibles. Jamas inventes nuevas categorias:\n");
+        prompt.append("Lista de categorias disponibles: \n");
+
+        for (CategoriaRecursoDTO categoria : lvListaCategorias.getItems()) {
+            prompt.append("- ").append(categoria.getID()).append(": ").append(categoria.getDescripcion()).append("\n");
+        }
+
+        prompt.append("Prompt usuario: \"").append(promptUsuario).append("\"\n");
+        prompt.append("Responde con un JSON con esta forma exacta, sin texto adicional:\n");
+        prompt.append("{\"actividad\": \"\", \"fecha\": \"YYYY-MM-DD\", \"hora_inicio\": \"HH:mm\", \"hora_final\": \"HH:mm\", \"categorias\": [\"ID1\", \"ID2\"]}\n");
+        prompt.append("Si algun dato no esta en el prompt, dejalo como cadena vacia o lista vacia");
+
+        return prompt.toString();
+    }
+
+    // Falta manejar las excepciones
+    private void llenarReservaIA(JSONObject datos) {
+        try {
+            if (datos.has("actividad") && !datos.getString("actividad").isBlank()) {
+                txtActividad.setText(datos.getString("actividad"));
+            }
+
+            if (datos.has("fecha") && !datos.getString("fecha").isBlank()) {
+                dtReservarFecha.setValue(LocalDate.parse(datos.getString("fecha")));
+            }
+
+            if (datos.has("hora_inicio") && !datos.getString("hora_inicio").isBlank()) {
+                cbHoraInicio.setValue(datos.getString("hora_inicio"));
+            }
+
+            if (datos.has("hora_final") && !datos.getString("hora_final").isBlank()) {
+                cbHoraFinal.setValue(datos.getString("hora_final"));
+            }
+
+            lvListaCategorias.getSelectionModel().clearSelection();
+
+            if (datos.has("categorias")) {
+                JSONArray categoriasIA = datos.getJSONArray("categorias");
+                for (int i = 0; i < categoriasIA.length(); i++) {
+                    String idCategoria = categoriasIA.getString(i);
+                    for (CategoriaRecursoDTO categoria : lvListaCategorias.getItems()) {
+                        if (categoria.getID().equals(idCategoria)) {
+                            lvListaCategorias.getSelectionModel().select(categoria);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            mostrarAlerta("No se pudo hacer la reserva");
+        }
+    }
+
+    @FXML
+    private void reservarConIA() {
+        String prompt = txtPromptFrase.getText();
+        if (prompt == null || prompt.isBlank()) {
+            lblAvisosReservas.setText("Primero tiene que escribir un prompt");
+            return;
+        }
+
+        btnExtraerIA.setDisable(true);
+
+        Thread hiloIA = new Thread(() -> {
+            try {
+                JSONObject respuesta = consultarIA(prompt);
+                Platform.runLater(() -> {
+                    btnExtraerIA.setDisable(false);
+                    llenarReservaIA(respuesta);
+                });
+            } catch (ReservaException e) {
+                Platform.runLater(() -> {
+                    mostrarAlerta(e.getMessage());
+                    btnExtraerIA.setDisable(false);
+                });
+            }
+        });
+        hiloIA.start();
+    }
+
+    private JSONObject consultarIA(String frase) throws ReservaException {
+        try {
+            geminiService = new GeminiService();
+        } catch (IllegalStateException e) {
+            throw new ReservaException(e.getMessage(), e);
+        }
+        String prompt = construirPromptIA(frase);
+        String respuestaJson;
+        try {
+            respuestaJson = geminiService.enviarMensaje(prompt);
+        } catch (IOException | InterruptedException e) {
+            throw new ReservaException("No se pudo comunicar con el servicio de Gemini", e);
+        }
+        try {
+            return new JSONObject(respuestaJson);
+        } catch (JSONException e) {
+            throw new ReservaException("Gemini devolvio un formato incorrecto", e);
+        }
     }
 }

@@ -108,5 +108,16 @@
     "recursoIds": ["HP-1"],
     "categoriaIds": ["LPT"],
     "actividad": "fIREBOL"
+  },
+  {
+    "fecha": "2026-09-10",
+    "hora_init": "08:00",
+    "estado": "ACTIVA",
+    "hora_final": "10:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000011",
+    "recursoIds": ["HP-1"],
+    "categoriaIds": ["LPT"],
+    "actividad": "conferencia"
   }
 ]
