@@ -31,6 +31,20 @@ public class FuncionarioLogic {
         return usuarioLogic.agregar(funcionario);
     }
 
+    public boolean actualizar(String id, String nom, String tel){
+        FuncionarioDTO func = buscarID(id);
+
+        if(func == null ){
+            return false;
+        }
+
+        func.setNombre(nom);
+        func.setTelefono(tel);
+        usuarioLogic.guardarCambios();
+
+        return true;
+    }
+
     public List<FuncionarioDTO> listar(){
         return usuarioLogic.listarFuncionarios();
     }

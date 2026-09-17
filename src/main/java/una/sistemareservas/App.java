@@ -14,6 +14,7 @@ public class App extends Application {
         Parent raiz = FXMLLoader.load(getClass().getResource("/ui/LogInView.fxml"));
 
         escenarioPrincipal.setTitle("Sistema de Reservas");
+        escenarioPrincipal.getIcons().add(new Image(getClass().getResourceAsStream("/iconos/reserva.png")));
         escenarioPrincipal.setScene(new Scene(raiz));
         escenarioPrincipal.show();
         }

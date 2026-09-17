@@ -16,10 +16,10 @@ public class UsuarioLogic {
     private List<UsuarioDTO> usuarios =  new ArrayList<>();
     private final UsuarioDatos usuarioDatos = new UsuarioDatos();
 
-    private void guardar(){
-        try{
+    private void guardar() {
+        try {
             usuarioDatos.deserializar(usuarios);
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -104,6 +104,9 @@ public class UsuarioLogic {
         return funcionarios;
      }
 
+     public void guardarCambios(){
+        guardar();
+     }
 }
 
 
