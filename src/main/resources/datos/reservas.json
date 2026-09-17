@@ -119,5 +119,16 @@
     "recursoIds": ["HP-1"],
     "categoriaIds": ["LPT"],
     "actividad": "conferencia"
+  },
+  {
+    "fecha": "2026-09-20",
+    "hora_init": "13:00",
+    "estado": "ACTIVA",
+    "hora_final": "16:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000012",
+    "recursoIds": ["HP-1"],
+    "categoriaIds": ["LPT"],
+    "actividad": "charla de ia"
   }
 ]

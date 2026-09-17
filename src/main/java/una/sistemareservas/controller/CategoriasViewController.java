@@ -152,7 +152,7 @@ public class CategoriasViewController {
                 documento.open();
 
                 // 3. Título y encabezado del PDF
-                documento.add(new Paragraph("Reporte de Mis Reservas"));
+                documento.add(new Paragraph("Reporte de Categorias"));
                 documento.add(new Paragraph(" ")); // Espacio en blanco
 
                 // 4. Crear tabla de iText con 6 columnas (igual a tu interfaz)

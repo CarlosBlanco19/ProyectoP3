@@ -30,7 +30,6 @@ public class LogInViewController {
 
     @FXML private void initialize(){
         btnIngresar.setOnAction(this::intentarIngresar);
-        btnCancelar.setOnAction(evento -> NavegadorPantallas.cambiarPantalla(evento, "/ui/MenuPrincipalView.fxml"));
         btnCambiar.setOnAction(evento -> NavegadorPantallas.cambiarPantalla(evento, "/ui/CambiarClaveView.fxml"));
     }
 

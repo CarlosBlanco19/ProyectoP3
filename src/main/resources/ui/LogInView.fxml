@@ -19,22 +19,21 @@
             <Image url="@../iconos/loginPersona.png" />
          </image>
       </ImageView>
-      <TextField fx:id="txtUsuario" layoutX="67.0" layoutY="78.0" prefHeight="25.0" prefWidth="175.0" promptText="ID" />
-      <Label layoutX="34.0" layoutY="82.0" text="ID">
+      <TextField fx:id="txtUsuario" layoutX="58.0" layoutY="78.0" prefHeight="26.0" prefWidth="184.0" promptText="ID" />
+      <Label layoutX="26.0" layoutY="82.0" text="ID">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <Label layoutX="26.0" layoutY="114.0" text="Clave">
+      <Label layoutX="18.0" layoutY="114.0" text="Clave">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <PasswordField fx:id="txtClave" layoutX="67.0" layoutY="110.0" prefHeight="25.0" prefWidth="175.0" promptText="Contraseña" />
+      <PasswordField fx:id="txtClave" layoutX="58.0" layoutY="110.0" prefHeight="26.0" prefWidth="184.0" promptText="Contraseña" />
       <HBox alignment="CENTER" layoutX="4.0" layoutY="145.0" prefHeight="44.0" prefWidth="291.0" spacing="20.0">
          <children>
             <Button fx:id="btnIngresar" mnemonicParsing="false" style="-fx-border-color: #2E7D32; -fx-border-width: 1.5px; -fx-border-radius: 4px; -fx-text-fill: #6B5A00;" text="Ingresar" />
-            <Button fx:id="btnCancelar" mnemonicParsing="false" style="-fx-border-color: #C62828; -fx-border-width: 2px; -fx-border-radius: 4px;" text="Cancelar" />
             <Button fx:id="btnCambiar" mnemonicParsing="false" style="-fx-border-color: #F9A825; -fx-border-width: 2px; -fx-border-radius: 4px;" text="Cambiar Clave" />
          </children>
          <opaqueInsets>
