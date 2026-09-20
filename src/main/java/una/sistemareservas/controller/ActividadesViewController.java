@@ -185,8 +185,8 @@ public class ActividadesViewController {
                         int horaInicio = reserva.getHora_init().getHour();
                         int horaFin = reserva.getHora_final().getHour();
 
-                        String idFunc = (reserva.getFuncionario() != null) ? reserva.getFuncionario().getID() : "ID_Oculto";
-                        String textoActividad = reserva.getActividad() + "\n(" + idFunc + ")";
+                        String nomFunc = (reserva.getFuncionario() != null) ? reserva.getFuncionario().getNombre() : "NULL";
+                        String textoActividad = reserva.getActividad() + "\n(" + nomFunc + ")";
 
                         for (FilaHorario fila : filas) {
                             // Extraemos el número de la hora de la fila (ej. "08:00" -> 8)

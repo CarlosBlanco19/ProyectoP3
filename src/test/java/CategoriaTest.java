@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CategoriaTest {
 
     @Test
-    void agregar_conIdDuplicado_debeDevolverFalse() {
+    void agregarIdDuplicado() {
         CategoriaLogic logic = new CategoriaLogic();
         // "LPT" ya existe en categorias.json
         boolean resultado = logic.agregar(new CategoriaRecursoDTO("LPT", "Otra descripcion"));
@@ -17,14 +17,14 @@ public class CategoriaTest {
     }
 
     @Test
-    void buscarDescripcion_conTextoInexistente_debeDevolverListaVacia() {
+    void buscarDescripcionTextoInexistente() {
         CategoriaLogic logic = new CategoriaLogic();
         List<CategoriaRecursoDTO> resultado = logic.buscarDescripcion("TEXTO-QUE-NO-EXISTE-EN-NINGUNA-CATEGORIA");
         assertTrue(resultado.isEmpty());
     }
 
     @Test
-    void agregarActualizarYEliminar_debeMantenerElArchivoIgual() {
+    void agregarActualizarEliminar() {
         CategoriaLogic logic = new CategoriaLogic();
         CategoriaRecursoDTO temporal = new CategoriaRecursoDTO("TEST-TEMP", "Descripcion inicial");
 

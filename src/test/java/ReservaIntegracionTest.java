@@ -14,10 +14,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ReservaIntegracion {
+public class ReservaIntegracionTest {
 
     @Test
-    void flujoCompleto_categoriaRecursoReservaYCancelacion()
+    void RecursoReserva_Cancelacion()
             throws Exception {
 
         CategoriaLogic categoriaLogic = new CategoriaLogic();

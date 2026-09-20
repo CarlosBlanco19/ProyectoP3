@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FuncionarioTest {
 
     @Test
-    void agregar_conIdDuplicado_debeDevolverFalse() {
+    void agregarIdDuplicado() {
         UsuarioLogic usuarioLogic = new UsuarioLogic();
         FuncionarioLogic logic = new FuncionarioLogic(usuarioLogic);
 
@@ -20,7 +20,7 @@ public class FuncionarioTest {
     }
 
     @Test
-    void buscarNombre_conTextoInexistente_debeDevolverListaVacia() {
+    void buscarNombreTextoInexistente() {
         UsuarioLogic usuarioLogic = new UsuarioLogic();
         FuncionarioLogic logic = new FuncionarioLogic(usuarioLogic);
 
@@ -29,7 +29,7 @@ public class FuncionarioTest {
     }
 
     @Test
-    void agregarYEliminar_debeMantenerElArchivoIgual() {
+    void agregarEliminar() {
         UsuarioLogic usuarioLogic = new UsuarioLogic();
         FuncionarioLogic logic = new FuncionarioLogic(usuarioLogic);
 

@@ -22,7 +22,7 @@ public class ReservasTest {
     }
 
     @Test
-    void reservar_conRecursoDisponible_debeCrearLaReserva() throws Exception {
+    void crearReserva_conRecurso() throws Exception {
         ReservaLogic logic = crearReservaLogic();
         CategoriaLogic categoriaLogic = new CategoriaLogic();
         CategoriaRecursoDTO categoriaLPT = categoriaLogic.buscarID("LPT");
@@ -39,7 +39,7 @@ public class ReservasTest {
     }
 
     @Test
-    void reservar_sinRecursoDisponible_debeLanzarReservaException() throws Exception {
+    void reservar_sinRecurso() throws Exception {
         ReservaLogic logic = crearReservaLogic();
         CategoriaLogic categoriaLogic = new CategoriaLogic();
         CategoriaRecursoDTO categoriaATV = categoriaLogic.buscarID("ATV");
@@ -60,7 +60,7 @@ public class ReservasTest {
     }
 
     @Test
-    void cancelar_conFechaPasada_debeLanzarReservaException() throws Exception {
+    void cancelarFechaPasada() throws Exception {
         ReservaLogic logic = crearReservaLogic();
         // RES-000002 ya tiene fecha pasada y estado ACTIVA en reservas.json
         ReservaDTO reservaPasada = logic.buscarPorID("RES-000002");

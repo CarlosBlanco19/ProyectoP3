@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RecursosTest {
 
     @Test
-    void listarPorCategoria_conCategoriaExistente_debeDevolverSoloEsaCategoria() {
+    void listarPorCategoria_Existente() {
         CategoriaLogic categoriaLogic = new CategoriaLogic();
         RecursoLogic recursoLogic = new RecursoLogic(categoriaLogic);
 
@@ -26,7 +26,7 @@ public class RecursosTest {
 
 
     @Test
-    void buscarID_conIdInexistente_debeDevolverNull() {
+    void buscarIdInexistente() {
         CategoriaLogic categoriaLogic = new CategoriaLogic();
         RecursoLogic recursoLogic = new RecursoLogic(categoriaLogic);
 
@@ -34,7 +34,7 @@ public class RecursosTest {
     }
 
     @Test
-    void agregarYEliminar_debeMantenerElArchivoIgual() {
+    void agregarEliminar() {
         CategoriaLogic categoriaLogic = new CategoriaLogic();
         RecursoLogic recursoLogic = new RecursoLogic(categoriaLogic);
 

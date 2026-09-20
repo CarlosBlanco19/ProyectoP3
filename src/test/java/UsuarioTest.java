@@ -7,20 +7,20 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UsuarioTest {
 
     @Test
-    void autenticar_conClaveIncorrecta_debeDevolverNull() {
+    void autenticarClaveIncorrecta() {
         UsuarioLogic logic = new UsuarioLogic();
         UsuarioDTO resultado = logic.autenticar("admin", "claveQueNoExiste");
         assertNull(resultado);
     }
 
     @Test
-    void buscarID_conIdInexistente_debeDevolverNull() {
+    void buscarIDInexistente() {
         UsuarioLogic logic = new UsuarioLogic();
         assertNull(logic.buscarID("ID-QUE-NO-EXISTE"));
     }
 
     @Test
-    void agregarYEliminar_debeMantenerElArchivoIgual() {
+    void agregarEliminar() {
         UsuarioLogic logic = new UsuarioLogic();
         una.sistemareservas.dto.FuncionarioDTO temporal =
                 new una.sistemareservas.dto.FuncionarioDTO("TEST-TEMP", "Temporal", "0000-0000");
