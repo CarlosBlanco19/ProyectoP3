@@ -16,7 +16,22 @@ import una.sistemareservas.dto.ReservaDTO;
 import una.sistemareservas.service.RecursoService;
 import una.sistemareservas.service.ReservaService;
 import una.sistemareservas.service.UsuarioService;
-
+import com.itextpdf.text.Document;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import javafx.stage.FileChooser;
+import java.io.File;
+import java.io.FileOutputStream;
+import javafx.scene.image.WritableImage;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.PixelReader;
+import javafx.scene.paint.Color;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Element;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -38,6 +53,7 @@ public class EstadisticasViewController {
     @FXML private TableColumn<EstadisticaItem, String> colEstSemanaActividades;
     @FXML private TableColumn<EstadisticaItem, Number> colEstCantidadActividades;
     @FXML private BarChart<String, Number> bcActividades;
+    @FXML private Button btnImprimirEstadisticas;
 
     private final CategoriaService categoriaService = new CategoriaService();
     private final ObservableList<CategoriaRecursoDTO> datosTablacategorias = FXCollections.observableArrayList();
@@ -64,7 +80,7 @@ public class EstadisticasViewController {
 
         btnCargarRecursos.setOnAction(this::cargarEstadisticasRecursos);
         btnCargarActividades.setOnAction(this::cargarEstadisticasActividades);
-
+        btnImprimirEstadisticas.setOnAction(this::imprimirEstadisticas);
         //Todo esto es para que el grafico no salga bugueado.
         bcRecursos.setAnimated(false);
         bcActividades.setAnimated(false);
@@ -176,5 +192,121 @@ public class EstadisticasViewController {
         public javafx.beans.property.SimpleStringProperty nombreProperty() { return nombre; }
         public javafx.beans.property.SimpleIntegerProperty cantidadProperty() { return cantidad; }
     }
+
+    @FXML
+    private void imprimirEstadisticas(ActionEvent event) {
+        if (tabEstadisticasRecursos.getItems().isEmpty() && tabEstadisticasActividades.getItems().isEmpty()) {
+            mostrarAlerta("No hay estadísticas cargadas para generar el reporte.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar Reporte de Estadísticas");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
+        fileChooser.setInitialFileName("Reporte_Estadisticas_" + LocalDate.now() + ".pdf");
+
+        File file = fileChooser.showSaveDialog(btnImprimirEstadisticas.getScene().getWindow());
+
+        if (file != null) {
+            try {
+                Document documento = new Document(PageSize.A4);
+                PdfWriter.getInstance(documento, new FileOutputStream(file));
+                documento.open();
+
+                documento.add(new Paragraph("Reporte General de Estadísticas"));
+                documento.add(new Paragraph("Fecha de impresión: " + LocalDate.now()));
+                documento.add(new Paragraph(" "));
+
+                // --- SECCIÓN 1: RECURSOS ---
+                if (!tabEstadisticasRecursos.getItems().isEmpty()) {
+                    documento.add(new Paragraph("1. Recursos más utilizados ("
+                            + dtDesdeRecursosFecha.getValue() + " al " + dtHastaRecursosFecha.getValue() + ")"));
+                    documento.add(new Paragraph(" "));
+
+                    PdfPTable tablaRecursos = new PdfPTable(2);
+                    tablaRecursos.setWidthPercentage(100);
+
+                    PdfPCell celdaCat = new PdfPCell(new Phrase("Categoría"));
+                    PdfPCell celdaCant = new PdfPCell(new Phrase("Cantidad"));
+                    celdaCat.setBackgroundColor(new com.itextpdf.text.BaseColor(200, 200, 200));
+                    celdaCant.setBackgroundColor(new com.itextpdf.text.BaseColor(200, 200, 200));
+                    tablaRecursos.addCell(celdaCat);
+                    tablaRecursos.addCell(celdaCant);
+
+                    for (EstadisticaItem item : tabEstadisticasRecursos.getItems()) {
+                        tablaRecursos.addCell(item.nombreProperty().get());
+                        tablaRecursos.addCell(String.valueOf(item.cantidadProperty().get()));
+                    }
+                    documento.add(tablaRecursos);
+                    documento.add(new Paragraph(" "));
+
+                    agregarGraficoAlDocumento(documento, bcRecursos);
+                    documento.add(new Paragraph(" "));
+                }
+
+                // --- SECCIÓN 2: ACTIVIDADES ---
+                if (!tabEstadisticasActividades.getItems().isEmpty()) {
+                    documento.add(new Paragraph("2. Actividades por semana ("
+                            + dtDesdeActividadesFecha.getValue() + " al " + dtHastaActividadesFecha.getValue() + ")"));
+                    documento.add(new Paragraph(" "));
+
+                    PdfPTable tablaActividades = new PdfPTable(2);
+                    tablaActividades.setWidthPercentage(100);
+
+                    PdfPCell celdaSemana = new PdfPCell(new Phrase("Semana"));
+                    PdfPCell celdaCantAct = new PdfPCell(new Phrase("Cantidad"));
+                    celdaSemana.setBackgroundColor(new com.itextpdf.text.BaseColor(200, 200, 200));
+                    celdaCantAct.setBackgroundColor(new com.itextpdf.text.BaseColor(200, 200, 200));
+                    tablaActividades.addCell(celdaSemana);
+                    tablaActividades.addCell(celdaCantAct);
+
+                    for (EstadisticaItem item : tabEstadisticasActividades.getItems()) {
+                        tablaActividades.addCell(item.nombreProperty().get());
+                        tablaActividades.addCell(String.valueOf(item.cantidadProperty().get()));
+                    }
+                    documento.add(tablaActividades);
+                    documento.add(new Paragraph(" "));
+
+                    agregarGraficoAlDocumento(documento, bcActividades);
+                }
+
+                documento.close();
+                mostrarAlerta("¡El reporte PDF se ha guardado exitosamente!");
+
+            } catch (Exception e) {
+                mostrarAlerta("Error al guardar el documento PDF: " + e.getMessage());
+            }
+        }
+    }
+
+    private void agregarGraficoAlDocumento(Document documento, BarChart<String, Number> grafico) throws Exception {
+        WritableImage fxImage = grafico.snapshot(new SnapshotParameters(), null);
+
+        int width = (int) fxImage.getWidth();
+        int height = (int) fxImage.getHeight();
+
+        PixelReader reader = fxImage.getPixelReader();
+        byte[] rgbData = new byte[width * height * 3];
+
+        int index = 0;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Color color = reader.getColor(x, y);
+                // Convertir el color (que va de 0.0 a 1.0) a bytes (de 0 a 255)
+                rgbData[index++] = (byte) (color.getRed() * 255);
+                rgbData[index++] = (byte) (color.getGreen() * 255);
+                rgbData[index++] = (byte) (color.getBlue() * 255);
+            }
+        }
+
+
+        Image pdfImage = Image.getInstance(width, height, 3, 8, rgbData);
+
+        pdfImage.scaleToFit(450, 300);
+        pdfImage.setAlignment(Element.ALIGN_CENTER);
+
+        documento.add(pdfImage);
+    }
+
 
 }

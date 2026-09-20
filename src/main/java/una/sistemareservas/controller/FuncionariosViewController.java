@@ -19,16 +19,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import una.sistemareservas.dto.FuncionarioDTO;
-import una.sistemareservas.dto.RecursoDTO;
-import una.sistemareservas.dto.ReservaDTO;
 import una.sistemareservas.service.FuncionarioService;
 import una.sistemareservas.service.UsuarioService;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FuncionariosViewController {
 

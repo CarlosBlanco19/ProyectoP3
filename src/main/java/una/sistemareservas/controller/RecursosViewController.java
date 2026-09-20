@@ -16,7 +16,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
 import una.sistemareservas.dto.RecursoDTO;
-import una.sistemareservas.dto.ReservaDTO;
 import una.sistemareservas.service.CategoriaService;
 import una.sistemareservas.service.RecursoService;
 
@@ -24,7 +23,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RecursosViewController {
     @FXML private ComboBox<CategoriaRecursoDTO> cbBusquedaCategoriaRecursos;

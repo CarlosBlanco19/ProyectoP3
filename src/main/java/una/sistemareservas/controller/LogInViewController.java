@@ -1,7 +1,6 @@
 package una.sistemareservas.controller;
 
 import una.sistemareservas.dto.UsuarioDTO;
-import una.sistemareservas.logic.UsuarioLogic;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
