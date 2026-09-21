@@ -1,6 +1,6 @@
 [
   {
-    "descripcion": "Laptop-hp",
+    "descripcion": "Laptop",
     "id": "LPT"
   },
   {
@@ -12,11 +12,11 @@
     "id": "STE"
   },
   {
-    "descripcion": "PRUEBA2",
-    "id": "PRB"
+    "descripcion": "Proyector",
+    "id": "PTR"
   },
   {
-    "descripcion": "FUEGO",
-    "id": "HP"
+    "descripcion": "Control de Aire Acondicionado",
+    "id": "AIR"
   }
 ]

@@ -10,8 +10,8 @@
     "categoriaId": "ATV"
   },
   {
-    "descripcion": "Leo mesi",
-    "id": "PR",
-    "categoriaId": "STE"
+    "descripcion": "Control de aire acondicionado para sala de exposiciones",
+    "id": "AIR-1",
+    "categoriaId": "AIR"
   }
 ]
