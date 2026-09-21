@@ -336,7 +336,7 @@ public class ReservasViewController {
                 });
             } catch (ReservaException e) {
                 Platform.runLater(() -> {
-                    mostrarAlerta(e.getMessage());
+                    mostrarAlerta(e.getMessage() + "\n\n" + "Mensaje detallado del error: " + "\n" + e.getCause().getMessage());
                     btnExtraerIA.setDisable(false);
                 });
             }

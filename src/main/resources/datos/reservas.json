@@ -64,5 +64,16 @@
     "recursoIds": ["HP-1"],
     "categoriaIds": ["LPT"],
     "actividad": "charla de ia"
+  },
+  {
+    "fecha": "2026-09-22",
+    "hora_init": "13:00",
+    "estado": "ACTIVA",
+    "hora_final": "18:00",
+    "funcionarioId": "ISS",
+    "id": "RES-000013",
+    "recursoIds": ["HP-1"],
+    "categoriaIds": ["LPT"],
+    "actividad": "torneo de aura2"
   }
 ]
