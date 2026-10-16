@@ -1,44 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<TabPane fx:id="tabPaneMenuPrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="760.0" prefWidth="820.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="una.sistemareservas.controller.MenuPrincipalViewController">
-  <tabs>
-    <Tab fx:id="tabReservas" text="Reservas">
-      <content>
-        <fx:include source="ReservasView.fxml" />
-      </content>
-    </Tab>
-    <Tab fx:id="tabFuncionarios" text="Funcionarios">
-      <content>
-          <fx:include source="FuncionariosView.fxml" />
-      </content>
-    </Tab>
-      <Tab fx:id="tabCategorias" text="Categorias">
-         <content>
-             <fx:include source="CategoriasView.fxml" />
-         </content>
-      </Tab>
-      <Tab fx:id="tabRecursos" text="Recursos">
-         <content>
-             <fx:include source="RecursosView.fxml" />
-         </content>
-      </Tab>
-      <Tab fx:id="tabCalendarizacion" text="Calendarizacion">
-         <content>
-             <fx:include source="CalendarizacionView.fxml" />
-         </content>
-      </Tab>
-      <Tab fx:id="tabActividades" text="Actividades">
-         <content>
-             <fx:include source="ActividadesView.fxml" />
-         </content>
-      </Tab>
-      <Tab fx:id="tabEstadisticas" text="Estadisticas">
-         <content>
-             <fx:include source="EstadisticasView.fxml" />
-         </content>
-      </Tab>
-  </tabs>
-</TabPane>
+
+<BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="una.sistemareservas.controller.MenuPrincipalViewController">
+   <center>
+      <TabPane fx:id="tabPaneMenuPrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="760.0" prefWidth="820.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab fx:id="tabReservas" text="Reservas">
+            <content>
+              <fx:include source="ReservasView.fxml" />
+            </content>
+          </Tab>
+          <Tab fx:id="tabFuncionarios" text="Funcionarios">
+            <content>
+                <fx:include source="FuncionariosView.fxml" />
+            </content>
+          </Tab>
+            <Tab fx:id="tabCategorias" text="Categorias">
+               <content>
+                   <fx:include source="CategoriasView.fxml" />
+               </content>
+            </Tab>
+            <Tab fx:id="tabRecursos" text="Recursos">
+               <content>
+                   <fx:include source="RecursosView.fxml" />
+               </content>
+            </Tab>
+            <Tab fx:id="tabCalendarizacion" text="Calendarizacion">
+               <content>
+                   <fx:include source="CalendarizacionView.fxml" />
+               </content>
+            </Tab>
+            <Tab fx:id="tabActividades" text="Actividades">
+               <content>
+                   <fx:include source="ActividadesView.fxml" />
+               </content>
+            </Tab>
+            <Tab fx:id="tabEstadisticas" text="Estadisticas">
+               <content>
+                   <fx:include source="EstadisticasView.fxml" />
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+   <right>
+      <VBox prefHeight="760.0" prefWidth="300.0" spacing="20.0" style="-fx-border-color: black; -fx-border-width: 1.5; -fx-border-radius: 4;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <children>
+            <Label text="Alertas">
+               <font>
+                  <Font name="Arial Bold" size="18.0" />
+               </font>
+            </Label>
+            <TableView fx:id="tabAlertas" prefHeight="664.0" prefWidth="278.0">
+              <columns>
+                <TableColumn fx:id="colAlertaActividad" prefWidth="160.00000303983688" text="Actividad" />
+                <TableColumn fx:id="colAlertaVer" prefWidth="60.0001220703125" sortable="false" text="Ver" />
+                  <TableColumn fx:id="colAlertaDescartar" prefWidth="57.59996032714844" sortable="false" text="Desc." />
+              </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+         </children>
+      </VBox>
+   </right>
+</BorderPane>
