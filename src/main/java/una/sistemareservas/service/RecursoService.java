@@ -27,7 +27,7 @@ public class RecursoService {
         return recursoLogic.listar();
     }
 
-    public List<RecursoDTO> listarPorCategoria(String categoria) {
+    public List<RecursoDTO> listarPorCategoria(int categoria) {
         return recursoLogic.listarCategoria(categoria);
     }
     public RecursoLogic logic() {

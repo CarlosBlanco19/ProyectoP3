@@ -75,11 +75,10 @@ public class RecursoLogic {
         return recursos;
     }
 
-    public List<RecursoDTO> listarCategoria(String idCategoria) {
+    public List<RecursoDTO> listarCategoria(int idCategoria) {
         List<RecursoDTO> res = new ArrayList<>();
         for (RecursoDTO recurso : recursos) {
-            if (recurso.getCategoria() != null && recurso.getCategoria().getID().equals(idCategoria)) {
-                res.add(recurso);
+            if (recurso.getCategoria() != null && recurso.getCategoria().getID() == idCategoria) {                res.add(recurso);
             }
         }
         return res;

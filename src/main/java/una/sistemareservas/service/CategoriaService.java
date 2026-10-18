@@ -1,5 +1,6 @@
 package una.sistemareservas.service;
 
+import una.sistemareservas.exception.CategoriaException;
 import una.sistemareservas.logic.CategoriaLogic;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
 
@@ -8,7 +9,7 @@ import java.util.List;
 public class CategoriaService {
     private final CategoriaLogic categoriaLogic = new CategoriaLogic();
 
-    public CategoriaRecursoDTO buscarID(String id) {
+    public CategoriaRecursoDTO buscarID(int id) {
         return categoriaLogic.buscarID(id);
     }
 
@@ -16,17 +17,17 @@ public class CategoriaService {
         return categoriaLogic.buscarDescripcion(des);
     }
 
-    public boolean agregar(CategoriaRecursoDTO categoria) {
-        return categoriaLogic.agregar(categoria);
+    public void agregar(CategoriaRecursoDTO categoria) {categoriaLogic.agregar(categoria);
     }
 
-    public boolean actualizar(String id, String desc) {
-        return categoriaLogic.actualizar(id, desc);
+    public void actualizar(int id, String desc) throws CategoriaException {
+        categoriaLogic.actualizar(id, desc);
     }
 
-    public boolean eliminar(String id) {
-        return categoriaLogic.eliminar(id);
+    public void eliminar(int id) throws CategoriaException {
+        categoriaLogic.eliminar(id);
     }
+
 
     public List<CategoriaRecursoDTO> listar() {
         return categoriaLogic.listar();

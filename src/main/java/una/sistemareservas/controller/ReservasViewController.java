@@ -304,9 +304,9 @@ public class ReservasViewController {
             if (datos.has("categorias")) {
                 JSONArray categoriasIA = datos.getJSONArray("categorias");
                 for (int i = 0; i < categoriasIA.length(); i++) {
-                    String idCategoria = categoriasIA.getString(i);
+                    int idCategoria = categoriasIA.getInt(i);
                     for (CategoriaRecursoDTO categoria : lvListaCategorias.getItems()) {
-                        if (categoria.getID().equals(idCategoria)) {
+                        if (categoria.getID() == idCategoria) {
                             lvListaCategorias.getSelectionModel().select(categoria);
                         }
                     }

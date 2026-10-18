@@ -60,12 +60,12 @@ public class ReservaDatos {
             JSONArray categoriaIds = reserva.getJSONArray("categoriaIds");
             // Itero en el array
             for (int j = 0; j < categoriaIds.length(); j++) {
-                String categoriaId = categoriaIds.getString(j);
+                int categoriaId = categoriaIds.getInt(j);
                 CategoriaRecursoDTO categoria = null;
                 // Agarro los Ids mientras itero
                 // Reviso si el Id esta en la lista de categorias pasadas por parametro
                 for (CategoriaRecursoDTO c : categoriasList) {
-                    if (c.getID().equals(categoriaId)) {
+                    if (c.getID() == categoriaId) {
                         categoria = c;
                         break;
                     }

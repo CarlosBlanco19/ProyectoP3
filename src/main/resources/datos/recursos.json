@@ -1,17 +1,1 @@
-[
-  {
-    "descripcion": "HP basica",
-    "id": "HP-1",
-    "categoriaId": "LPT"
-  },
-  {
-    "descripcion": "Conexión de microfono y altavoz para sala de expo",
-    "id": "ALT-1",
-    "categoriaId": "ATV"
-  },
-  {
-    "descripcion": "Control de aire acondicionado para sala de exposiciones",
-    "id": "AIR-1",
-    "categoriaId": "AIR"
-  }
-]
+[]

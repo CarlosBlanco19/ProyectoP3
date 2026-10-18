@@ -1,17 +1,17 @@
 package una.sistemareservas.dto;
 
 public class CategoriaRecursoDTO {
-    private String ID;
+    private int ID;
     private String Descripcion;
     // Cada categoria de recurso tiene minimo un id y una descripcion (Tal vez se pueda añadir algo mas despues)
 
-    public CategoriaRecursoDTO(String ID, String Descripcion) { // Constructor
+    public CategoriaRecursoDTO(int ID, String Descripcion) { // Constructor
         this.ID = ID;
         this.Descripcion = Descripcion;
     }
 
     // GETS
-    public String getID() {
+    public int getID() {
         return ID;
     }
     public String getDescripcion() {
@@ -19,7 +19,7 @@ public class CategoriaRecursoDTO {
     }
 
     // SETS
-    public void setID(String ID) {
+    public void setID(int ID) {
         this.ID = ID;
     }
     public void setDescripcion(String Descripcion) {

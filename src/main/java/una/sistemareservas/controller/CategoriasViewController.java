@@ -19,6 +19,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
+import una.sistemareservas.exception.CategoriaException;
 import una.sistemareservas.service.CategoriaService;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,7 +39,7 @@ public class CategoriasViewController {
     @FXML private Button btnBorrarCategoria;
     @FXML private Button btnLimpiarCategoria;
     @FXML private TableView<CategoriaRecursoDTO> tabCategorias;
-    @FXML private TableColumn<CategoriaRecursoDTO, String> colIdCategoria;
+    @FXML private TableColumn<CategoriaRecursoDTO, Integer> colIdCategoria;
     @FXML private TableColumn<CategoriaRecursoDTO, String> colDescripcionCategoria;
 
     private final CategoriaService categoriaService = new CategoriaService();
@@ -55,7 +56,7 @@ public class CategoriasViewController {
 
         tabCategorias.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                txtAgregarIdCategoria.setText(newValue.getID());
+                txtAgregarIdCategoria.setText(String.valueOf(newValue.getID()));
                 txtAgregarDescripcionCategoria.setText(newValue.getDescripcion());
             }
         });
@@ -83,42 +84,38 @@ public class CategoriasViewController {
     private void borrar(ActionEvent evento){
         String id = txtAgregarIdCategoria.getText().trim();
         if(id.isEmpty()){
-            lblAvisos.setText("Debe agregar una categoría");
+            lblAvisos.setText("Debe seleccionar una categoría de la tabla");
             return;
         }
 
-        if(categoriaService.eliminar(id)){
+        try {
+            categoriaService.eliminar(Integer.parseInt(id));
             cargarTabla(categoriaService.listar());
             limpiar();
-        }else{
-            lblAvisos.setText("No se pudo eliminar la categoría");
+        } catch (CategoriaException e) {
+            lblAvisos.setText(e.getMessage());
         }
     }
 
     private void guardar(ActionEvent evento){
+        // El ID solo tiene valor si se selecciono una fila de la tabla (entonces se actualiza)
         String id = txtAgregarIdCategoria.getText().trim();
         String desc = txtAgregarDescripcionCategoria.getText().trim();
-        if(id.isEmpty()) {
-            lblAvisos.setText("Debe agregar un id");
-            return;
-        }
 
-        boolean bandera; //para determinar si se guardo o no
-
-        if(categoriaService.buscarID(id) != null){
-            bandera = categoriaService.actualizar(id, desc);
-        }else{
-            bandera = categoriaService.agregar(new CategoriaRecursoDTO(id, desc));
-
-        }
-
-        if(bandera){
+        try {
+            if(id.isEmpty()){
+                categoriaService.agregar(new CategoriaRecursoDTO(0, desc));
+            }else{
+                categoriaService.actualizar(Integer.parseInt(id), desc);
+            }
             cargarTabla(categoriaService.listar());
             limpiar();
-        }else{
-            lblAvisos.setText("No se guardó la categoría");
+        } catch (CategoriaException e) {
+            lblAvisos.setText(e.getMessage());
         }
     }
+
+
 
     //limpia avisos, listas de catalogos
     private void limpiar(){
@@ -166,7 +163,7 @@ public class CategoriasViewController {
 
                 // 5. Extraer los datos de tabMisReservas fila por fila
                 for (CategoriaRecursoDTO categoria : tabCategorias.getItems()) {
-                    tablaPdf.addCell(categoria.getID());
+                    tablaPdf.addCell(String.valueOf(categoria.getID()));
                     tablaPdf.addCell(categoria.getDescripcion());
 
 

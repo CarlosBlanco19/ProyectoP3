@@ -43,12 +43,12 @@ public class RecursoDatos {
             // Saco los datos de cada "objeto recurso"
             String id = objeto.getString("id");
             String descripcion = objeto.getString("descripcion");
-            String categoriaId = objeto.getString("categoriaId");
+            int categoriaId = objeto.getInt("categoriaId");
 
             // Reviso si el ID de la categoria esta en la lista de todas las categorias
             CategoriaRecursoDTO categoria = null;
             for (CategoriaRecursoDTO c : categorias) {
-                if (c.getID().equals(categoriaId)) {
+                if (c.getID() == categoriaId) {
                     categoria = c;
                     break;
                 }

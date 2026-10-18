@@ -3,65 +3,82 @@ package una.sistemareservas.datos;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import una.sistemareservas.utilidades.Busqueda;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CategoriaRecursoDatos {
-    // Archivo de las categorias de recursos
-    private static final Path archivoCategoriasR = Path.of("src/main/resources/datos/categorias.json");
 
-    // Carga los datos de un archivo
-    public List<CategoriaRecursoDTO> serializar() throws IOException {
-        // Crea una lista para las categorias sacadas del archivo
+
+    public List<CategoriaRecursoDTO> listar() throws SQLException {
+
         List<CategoriaRecursoDTO> categorias = new ArrayList<>();
 
-        // Si el archivo no existe devuelvo la lista vacia
-        if (!Files.exists(archivoCategoriasR)) {
-            return categorias;
+        String sql = "SELECT pk_categoria, " +
+                "descripcion FROM categoriaRecursos ORDER BY pk_categoria";
+
+
+        // El try cierra solo la conexion statement y resultado al terminar
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet resSet = ps.executeQuery()) {
+
+            while (resSet.next()) {
+                int id = resSet.getInt("pk_categoria");
+                String descripcion = resSet.getString("descripcion");
+                categorias.add(new CategoriaRecursoDTO(id, descripcion));
+            }
         }
-
-        // Leo el archivo
-        String contenido = Files.readString(archivoCategoriasR);
-
-        if (contenido.isBlank()) {
-            return categorias;
-        }
-
-        // Array JSON para manejar el contenido
-        JSONArray listaCategoriasR = new JSONArray(contenido);
-
-        // For que itera en el array JSON, y obtiene los datos para construir un DTO de categoria recurso y añadirlo a la lista
-        for (int i = 0; i < listaCategoriasR.length(); i++) {
-            categorias.add(new CategoriaRecursoDTO(listaCategoriasR.getJSONObject(i).getString("id"), listaCategoriasR.getJSONObject(i).getString("descripcion")));
-        }
-
-        // Devuelve la lista
         return categorias;
     }
 
-    // Funcion para cargar datos a un archivo
-    // Recibe una lista de CategoriasRecursoDTO
-    public void deserializar(List<CategoriaRecursoDTO> categoriasR) throws IOException {
-        // Array en JSON para guardar en el archivo
-        JSONArray listaCategoriasR = new JSONArray();
+    // Inserta una categoria y devuelve el id generado
+    public int insertar(String descripcion) throws SQLException {
+        String sql = "INSERT INTO categoriaRecursos (descripcion) VALUES (?)";
 
-        // Itero en la lista de las categorias
-        for (CategoriaRecursoDTO categoriaR : categoriasR) {
-            // Creo un nuevo objeto JSON, y le añado los datos necesarios
-            JSONObject objeto = new JSONObject();
-            objeto.put("id", categoriaR.getID());
-            objeto.put("descripcion", categoriaR.getDescripcion());
-            // Inserto el "objeto" completo en la lista, eso para cada categoriaRecursoDTO de la lista
-            listaCategoriasR.put(objeto);
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, descripcion); // reemplaza el ? por la descripcion
+            ps.executeUpdate();
+
+            ResultSet claves = ps.getGeneratedKeys(); // aqui viene el id generado
+            claves.next();
+            return claves.getInt(1);
         }
-
-        // Por si no existen el archivo y/o las carpetas, los crea
-        Files.createDirectories(archivoCategoriasR.getParent());
-
-        // Sobrescribe el archivo con los datos de la lista pasada por parametro
-        Files.writeString(archivoCategoriasR, listaCategoriasR.toString(2));
     }
+
+    // Cambia la descripcion de una categoria
+    public void actualizar(int id, String descripcion) throws SQLException {
+        String sql = "UPDATE categoriaRecursos SET descripcion = ? WHERE pk_categoria = ?";
+
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, descripcion);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+        }
+    }
+
+    // Borra una categoria
+    // Si se esta usando se lanza una exception
+    public void eliminar(int id) throws SQLException {
+        String sql = "DELETE FROM categoriaRecursos WHERE pk_categoria = ?";
+
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+    }
+
+
+
 }
