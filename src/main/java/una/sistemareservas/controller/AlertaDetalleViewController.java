@@ -11,7 +11,6 @@ import una.sistemareservas.dto.ReservaDTO;
 
 import java.time.format.DateTimeFormatter;
 
-/** Controlador de la ventana emergente con el detalle de una alerta. */
 public class AlertaDetalleViewController {
 
     private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("HH:mm");
@@ -28,7 +27,7 @@ public class AlertaDetalleViewController {
         btnOk.setOnAction(evento -> ((Stage) btnOk.getScene().getWindow()).close());
     }
 
-    /** El menú principal llama esto justo después de cargar el FXML. */
+    //El menú principal llama esto justo después de cargar el FXML
     public void mostrarReserva(ReservaDTO reserva) {
         lblEncargado.setText(reserva.getFuncionario() != null ? reserva.getFuncionario().getNombre() : "-");
         lblFecha.setText(reserva.getFecha() != null ? reserva.getFecha().toString() : "-");

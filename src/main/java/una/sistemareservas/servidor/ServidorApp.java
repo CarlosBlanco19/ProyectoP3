@@ -16,7 +16,7 @@ import java.util.Collections;
 public class ServidorApp {
 
     public static void main(String[] args) {
-        System.out.println("=== Sistema de Reservas - Backend ===");
+        System.out.println("Sistema de Reservas - Backend");
 
         if (!probarBaseDeDatos()) {
             System.exit(1);
@@ -41,20 +41,18 @@ public class ServidorApp {
     }
 
     private static boolean probarBaseDeDatos() {
-        System.out.println("Conectando a la base de datos como '" + ConexionDB.getUsuario() + "'...");
+        System.out.println("Conectando a la base de datos como: " + ConexionDB.getUsuario());
         try (Connection con = ConexionDB.getConnection()) {
-            System.out.println("Base de datos OK.");
+            System.out.println("Base de datos OK");
             return true;
         } catch (SQLException e) {
-            System.err.println("ERROR: no se pudo conectar a MySQL.");
+            System.err.println("NO se pudo conectar a MySQL");
             System.err.println("Detalle: " + e.getMessage());
             String mensaje = String.valueOf(e.getMessage()).toLowerCase();
             if (mensaje.contains("access denied")) {
-                System.err.println("-> La clave o el usuario no coinciden. Corra database/1_sistemaReservas.sql o revise db.clave en backend.properties.");
+                System.err.println("-> La clave o el usuario no coinciden");
             } else if (mensaje.contains("unknown database")) {
                 System.err.println("-> La base de datos no existe. Corra los scripts de la carpeta database (1, 2 y 3, en ese orden).");
-            } else if (mensaje.contains("communications link failure") || mensaje.contains("connection refused")) {
-                System.err.println("-> MySQL no está encendido o no está en el puerto 3306.");
             }
             return false;
         }
@@ -68,7 +66,7 @@ public class ServidorApp {
                 }
                 for (InetAddress direccion : Collections.list(interfaz.getInetAddresses())) {
                     if (direccion.getAddress().length == 4) { // Solo IPv4
-                        System.out.println("  IP de esta máquina en la red: " + direccion.getHostAddress());
+                        System.out.println("  IP de la computadora: " + direccion.getHostAddress());
                     }
                 }
             }

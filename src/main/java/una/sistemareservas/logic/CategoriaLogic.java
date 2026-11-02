@@ -7,7 +7,6 @@ import una.sistemareservas.exception.CategoriaException;
 import java.sql.SQLException;
 import java.util.List;
 
-// Mantenimiento de categorías de recursos (solo el administrador)
 public class CategoriaLogic {
 
     private final CategoriaRecursoDatos categoriasDatos = new CategoriaRecursoDatos();
@@ -49,7 +48,7 @@ public class CategoriaLogic {
             int id = categoriasDatos.insertar(limpia);
             return new CategoriaRecursoDTO(id, limpia);
         } catch (SQLException e) {
-            throw new CategoriaException(ErroresBD.mensaje("guardar la categoría", e), e);
+            throw new CategoriaException(ErroresBD.mensaje("guardar la categoria", e), e);
         }
     }
 
@@ -57,7 +56,7 @@ public class CategoriaLogic {
         String limpia = validarDescripcion(descripcion);
         try {
             if (categoriasDatos.buscarPorId(id) == null) {
-                throw new CategoriaException("La categoría no existe");
+                throw new CategoriaException("categoria no existe");
             }
             if (categoriasDatos.existeDescripcion(limpia, id)) {
                 throw new CategoriaException("Ya existe otra categoría llamada \"" + limpia + "\"");
@@ -71,21 +70,21 @@ public class CategoriaLogic {
     public void eliminar(int id) throws CategoriaException {
         try {
             if (categoriasDatos.buscarPorId(id) == null) {
-                throw new CategoriaException("La categoría no existe");
+                throw new CategoriaException("categoría no existe");
             }
             categoriasDatos.eliminar(id);
         } catch (SQLException e) {
             if (ErroresBD.esLlaveForanea(e)) {
-                throw new CategoriaException("No se puede eliminar la categoría porque tiene recursos o reservas asociados");
+                throw new CategoriaException("No se ppudo eliminar la categoria porque tiene recursos o reservas asociados");
             }
-            throw new CategoriaException(ErroresBD.mensaje("eliminar la categoría", e), e);
+            throw new CategoriaException(ErroresBD.mensaje("eliminar la categoria", e), e);
         }
     }
 
     // Validación que no necesita la base de datos
     String validarDescripcion(String descripcion) throws CategoriaException {
         if (descripcion == null || descripcion.isBlank()) {
-            throw new CategoriaException("La descripción es obligatoria");
+            throw new CategoriaException("descripcion obligatoria");
         }
         String limpia = descripcion.trim();
         if (limpia.length() > 150) {

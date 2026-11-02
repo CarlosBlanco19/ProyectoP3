@@ -14,10 +14,10 @@ import una.sistemareservas.protocolo.IService;
 
 import java.util.List;
 
-/**
- * El Service "real" (del lado del Backend). Implementa IService delegando en las clases de lógica.
- * Hay UNA sola instancia para todo el servidor; los Worker (uno por Frontend) la comparten.
- */
+
+ //El Service "real" (del lado del Backend). Implementa IService delegando en las clases de lógica.
+ //Hay UNA sola instancia para todo el servidor, las forntend la comparten.
+
 public class Service implements IService {
 
     private final UsuarioLogic usuarioLogic = new UsuarioLogic();
@@ -26,7 +26,6 @@ public class Service implements IService {
     private final RecursoLogic recursoLogic = new RecursoLogic();
     private final ReservaLogic reservaLogic = new ReservaLogic();
 
-    // ---------------- Usuarios ----------------
     @Override
     public UsuarioDTO login(String id, String clave) throws Exception {
         return usuarioLogic.login(id, clave);
@@ -37,7 +36,6 @@ public class Service implements IService {
         usuarioLogic.cambiarClave(id, claveActual, claveNueva);
     }
 
-    // ---------------- Funcionarios ----------------
     @Override
     public List<FuncionarioDTO> listarFuncionarios() throws Exception {
         return funcionarioLogic.listar();
@@ -63,12 +61,15 @@ public class Service implements IService {
         funcionarioLogic.actualizar(funcionario);
     }
 
+
+
     @Override
     public void eliminarFuncionario(String id) throws Exception {
         funcionarioLogic.eliminar(id);
     }
 
-    // ---------------- Categorías ----------------
+
+
     @Override
     public List<CategoriaRecursoDTO> listarCategorias() throws Exception {
         return categoriaLogic.listar();
@@ -94,7 +95,9 @@ public class Service implements IService {
         categoriaLogic.eliminar(id);
     }
 
-    // ---------------- Recursos ----------------
+
+
+
     @Override
     public List<RecursoDTO> listarRecursos() throws Exception {
         return recursoLogic.listar();
@@ -125,7 +128,8 @@ public class Service implements IService {
         recursoLogic.eliminar(id);
     }
 
-    // ---------------- Reservas ----------------
+
+
     @Override
     public ReservaDTO reservar(ReservaDTO solicitud) throws Exception {
         return reservaLogic.reservar(solicitud);

@@ -15,7 +15,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-// Acceso a las tablas reserva, reservaCategoria y reservaRecurso
 public class ReservaDatos {
 
     private static final String SELECT_RESERVAS =
@@ -48,8 +47,7 @@ public class ReservaDatos {
         }
     }
 
-    // El ID más alto que existe (por ejemplo "RES-000008"), o null si no hay reservas.
-    // Como todos tienen el mismo formato con ceros a la izquierda, el orden de texto sirve.
+    // El ID más alto que existe o null si no hay reservas
     public String ultimoId() throws SQLException {
         try (Connection con = ConexionDB.getConnection();
              PreparedStatement ps = con.prepareStatement(
@@ -59,7 +57,7 @@ public class ReservaDatos {
         }
     }
 
-    // Guarda la reserva, sus categorías y sus recursos en una TRANSACCIÓN (todo o nada)
+    // Guarda la reserva, sus categorías/recursos en una transaccion unica
     public void insertar(ReservaDTO reserva) throws SQLException {
         try (Connection con = ConexionDB.getConnection()) {
             con.setAutoCommit(false);
@@ -98,8 +96,7 @@ public class ReservaDatos {
         }
     }
 
-    // Cancelar = cambiar el estado. Los recursos quedan libres porque la búsqueda
-    // de disponibles solo toma en cuenta reservas ACTIVAS.
+    // Cancelar cambia el estado Los recursos quedan libres, ya que la búsqueda solo toma las reservas activas
     public void cancelar(String idReserva) throws SQLException {
         try (Connection con = ConexionDB.getConnection();
              PreparedStatement ps = con.prepareStatement("UPDATE reserva SET estado = 'CANCELADA' WHERE pk_reserva = ?")) {
@@ -152,7 +149,7 @@ public class ReservaDatos {
                     }
                 }
 
-                // Se vuelve a crear la reserva con sus categorías (la lista de categorías se pasa en el constructor)
+                // Se vuelve a crear la reserva con sus categorías (la lista de categorías se pasa en el constructor
                 ReservaDTO completa = new ReservaDTO(reserva.getID(), reserva.getFuncionario(), reserva.getActividad(),
                         reserva.getFecha(), reserva.getHora_init(), reserva.getHora_final(), categorias);
                 completa.setEstado(reserva.getEstado());

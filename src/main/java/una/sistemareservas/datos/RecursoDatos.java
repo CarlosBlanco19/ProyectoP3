@@ -43,11 +43,11 @@ public class RecursoDatos {
         }
     }
 
-    /**
-     * Recursos de una categoría que están LIBRES en esa fecha y horario.
-     * Un recurso está ocupado si pertenece a una reserva ACTIVA del mismo día cuyo horario se traslapa:
-     *     inicioExistente < finNuevo  Y  finExistente > inicioNuevo
-     */
+
+    //Recursos libres en esa fecha y horario
+    //si un recurso está ocupado si pertenece a una reserva activa del mismo día cuyo horario se traslapa:
+    //inicioExistente < finNuevo  Y  finExistente > inicioNuevo
+
     public List<RecursoDTO> listarDisponibles(int idCategoria, LocalDate fecha, LocalTime inicio, LocalTime fin)
             throws SQLException {
         String sql = SELECT_RECURSOS

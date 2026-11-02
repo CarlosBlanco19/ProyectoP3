@@ -4,8 +4,8 @@ import java.sql.SQLException;
 
 final class ErroresBD {
 
-    private static final int LLAVE_FORANEA = 1451; // Cannot delete or update a parent row
-    private static final int LLAVE_DUPLICADA = 1062; // Duplicate entry
+    private static final int LLAVE_FORANEA = 1451;
+    private static final int LLAVE_DUPLICADA = 1062;
 
     private ErroresBD() {
     }
@@ -22,6 +22,6 @@ final class ErroresBD {
 
     static String mensaje(String accion, SQLException e) {
         System.err.println("[BD] Error al " + accion + ": " + e.getMessage());
-        return "No se pudo " + accion + " por un error en la base de datos.";
+        return "No se pudo " + accion + " por un error en la db";
     }
 }

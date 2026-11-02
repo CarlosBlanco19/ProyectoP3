@@ -13,13 +13,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Servidor: escucha en un puerto y atiende a los Frontend.
- *
- * Por cada Frontend que se conecta se crea un Worker (un hilo) que atiende sus peticiones.
- * El servidor guarda la lista de Workers para poder enviarles notificaciones a todos
- * (por ejemplo cuando alguien crea una reserva).
- */
 public class Servidor {
 
     private final int puerto;
@@ -45,7 +38,7 @@ public class Servidor {
         return serverSocket != null ? serverSocket.getLocalPort() : puerto;
     }
 
-    /** Ciclo principal: espera conexiones. Se queda aquí hasta que se llame detener(). */
+    //Ciclo principal, espera conexiones, Se queda aquí hasta que se llame a detener
     public void atenderConexiones() {
         while (activo) {
             try {
@@ -59,7 +52,6 @@ public class Servidor {
         }
     }
 
-    /** Inicia el servidor en un hilo aparte (útil para las pruebas). */
     public Thread iniciarEnHilo() throws IOException {
         iniciar();
         Thread hilo = new Thread(this::atenderConexiones, "servidor");
@@ -68,11 +60,6 @@ public class Servidor {
         return hilo;
     }
 
-    /**
-     * Cada socket nuevo dice primero qué tipo de conexión es:
-     *  - SYNC: un Frontend nuevo. Se crea su Worker y se le responde con su número de sesión.
-     *  - ASYNC + número de sesión: el canal de notificaciones de un Frontend que ya se conectó.
-     */
     private void atenderNuevaConexion(Socket socket) {
         try {
             socket.setSoTimeout(5000); // Si no dice qué es en 5 segundos, se descarta
@@ -125,10 +112,6 @@ public class Servidor {
         return null;
     }
 
-    /**
-     * Envía la reserva nueva a TODOS los demás Frontend que tienen sesión iniciada,
-     * menos al que la creó (él ya la ve en "Mis reservas").
-     */
     public void notificarReserva(ReservaDTO reserva, Worker origen) {
         List<Worker> copia;
         synchronized (workers) {

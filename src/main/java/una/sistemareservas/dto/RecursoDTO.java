@@ -3,7 +3,6 @@ package una.sistemareservas.dto;
 import java.io.Serializable;
 import java.util.Objects;
 
-// Recurso concreto (por ejemplo "HP-1"), que pertenece a una categoría
 public class RecursoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -17,7 +16,7 @@ public class RecursoDTO implements Serializable {
         this.categoria = categoria;
     }
 
-    // GETS
+
     public String getID() {
         return ID;
     }
@@ -28,7 +27,8 @@ public class RecursoDTO implements Serializable {
         return categoria;
     }
 
-    // SETS
+
+
     public void setID(String ID) {
         this.ID = ID;
     }
@@ -39,7 +39,7 @@ public class RecursoDTO implements Serializable {
         this.categoria = categoria;
     }
 
-    // Dos recursos son iguales si tienen el mismo ID
+    //dos recursos son iguales si tiene el mismo id
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

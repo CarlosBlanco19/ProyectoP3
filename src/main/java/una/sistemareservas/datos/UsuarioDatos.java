@@ -12,13 +12,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-// Acceso a las tablas usuario y funcionario
 public class UsuarioDatos {
 
     private static final String SELECT_FUNCIONARIOS =
             "SELECT fk_usuario, nombre, telefono FROM funcionario ";
 
-    // Busca cualquier usuario (admin o funcionario) INCLUYENDO la clave. Solo se usa para validar el login.
     public UsuarioDTO buscarUsuario(String id) throws SQLException {
         String sql = "SELECT u.pk_usuario, u.clave, u.rol, f.nombre, f.telefono "
                 + "FROM usuario u LEFT JOIN funcionario f ON f.fk_usuario = u.pk_usuario "
@@ -52,7 +50,6 @@ public class UsuarioDatos {
         }
     }
 
-    // ---------------- Funcionarios (nunca devuelven la clave) ----------------
 
     public List<FuncionarioDTO> listarFuncionarios() throws SQLException {
         try (Connection con = ConexionDB.getConnection();
@@ -70,7 +67,6 @@ public class UsuarioDatos {
         }
     }
 
-    // LIKE '%texto%'. La base de datos usa una collation que no distingue mayúsculas
     public List<FuncionarioDTO> buscarFuncionariosPorNombre(String texto) throws SQLException {
         try (Connection con = ConexionDB.getConnection();
              PreparedStatement ps = con.prepareStatement(SELECT_FUNCIONARIOS + "WHERE nombre LIKE ? ORDER BY nombre")) {
@@ -79,7 +75,7 @@ public class UsuarioDatos {
         }
     }
 
-    // Inserta en usuario y en funcionario dentro de una TRANSACCIÓN: o se guardan los dos o ninguno
+    // Inserta en usuario y funcionario dentro de una transaccion
     public void insertarFuncionario(FuncionarioDTO funcionario, String clave) throws SQLException {
         try (Connection con = ConexionDB.getConnection()) {
             con.setAutoCommit(false);
@@ -116,7 +112,6 @@ public class UsuarioDatos {
     }
 
     // Borra de funcionario y de usuario en una transacción.
-    // Si el funcionario tiene reservas, MySQL lanza el error 1451 (llave foránea) y no se borra nada.
     public void eliminarFuncionario(String id) throws SQLException {
         try (Connection con = ConexionDB.getConnection()) {
             con.setAutoCommit(false);

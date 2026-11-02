@@ -8,8 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-// Toda la información de una reserva: quién la hizo, la actividad, fecha, horas,
-// las categorías que pidió y los recursos que el sistema le asignó.
 public class ReservaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -20,8 +18,8 @@ public class ReservaDTO implements Serializable {
     private LocalDate fecha;
     private LocalTime hora_init;
     private LocalTime hora_final;
-    private List<CategoriaRecursoDTO> categorias = new ArrayList<>(); // Categorías pedidas
-    private List<RecursoDTO> recursos = new ArrayList<>();            // Recursos asignados
+    private List<CategoriaRecursoDTO> categorias = new ArrayList<>();
+    private List<RecursoDTO> recursos = new ArrayList<>();
 
     public ReservaDTO(String ID, FuncionarioDTO funcionario, String actividad, LocalDate fecha,
                       LocalTime hora_init, LocalTime hora_final, List<CategoriaRecursoDTO> categorias) {
@@ -37,7 +35,9 @@ public class ReservaDTO implements Serializable {
         this.estado = EstadoReserva.ACTIVA;
     }
 
-    // GETS
+
+
+
     public String getID() {
         return ID;
     }
@@ -66,7 +66,8 @@ public class ReservaDTO implements Serializable {
         return Collections.unmodifiableList(recursos);
     }
 
-    // SETS
+
+
     public void setID(String id) {
         this.ID = id;
     }
@@ -89,12 +90,11 @@ public class ReservaDTO implements Serializable {
         this.hora_final = hora_final;
     }
 
-    // Métodos
     public void asignarRecurso(RecursoDTO recurso) {
         recursos.add(recurso);
     }
 
-    // Dos reservas son iguales si tienen el mismo ID
+    //mismo ID
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

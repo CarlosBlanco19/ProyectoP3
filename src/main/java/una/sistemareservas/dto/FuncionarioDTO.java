@@ -1,6 +1,5 @@
 package una.sistemareservas.dto;
 
-// Usuario FUNCIONARIO: además de ID y clave tiene nombre y teléfono
 public class FuncionarioDTO extends UsuarioDTO {
     private static final long serialVersionUID = 1L;
 
@@ -13,12 +12,12 @@ public class FuncionarioDTO extends UsuarioDTO {
         this.Telefono = Telefono;
     }
 
-    // Constructor sin clave (por ejemplo, cuando se lista: la clave nunca viaja al Frontend)
+    // Constructor sin clave
     public FuncionarioDTO(String ID, String Nombre, String Telefono) {
         this(ID, null, Nombre, Telefono);
     }
 
-    // GETS
+
     public String getNombre() {
         return Nombre;
     }
@@ -26,7 +25,7 @@ public class FuncionarioDTO extends UsuarioDTO {
         return Telefono;
     }
 
-    // SETS
+
     public void setNombre(String nombre) {
         Nombre = nombre;
     }

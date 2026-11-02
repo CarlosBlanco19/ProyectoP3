@@ -15,10 +15,7 @@ public class UsuarioLogic {
 
     private final UsuarioDatos usuarioDatos = new UsuarioDatos();
 
-    /**
-     * Devuelve el usuario si el ID y la clave son correctos.
-     * El usuario que se devuelve NO trae la clave (no tiene por qué viajar al Frontend).
-     */
+
     public UsuarioDTO login(String id, String clave) throws UsuarioException {
         if (estaVacio(id) || estaVacio(clave)) {
             throw new UsuarioException("Debe ingresar el usuario y la clave");
