@@ -116,6 +116,8 @@
             <Font name="Arial Bold" size="13.0" />
          </font>
       </Label>
+      <!-- Mensajes para el usuario (el controlador lo usaba pero no existía en la pantalla) -->
+      <Label fx:id="lblAvisosReservas" layoutX="130.0" layoutY="381.0" prefHeight="18.0" prefWidth="560.0" textFill="RED" />
       <Button fx:id="btnImprimirReservas" contentDisplay="RIGHT" layoutX="701.0" layoutY="481.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="99.0" text="Imprimir">
          <graphic>
             <ImageView fitHeight="33.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">

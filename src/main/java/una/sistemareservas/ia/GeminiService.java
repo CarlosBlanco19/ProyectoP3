@@ -1,4 +1,4 @@
-package una.sistemareservas.service;
+package una.sistemareservas.ia;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,15 +26,7 @@ public class GeminiService {
         this.httpClient = HttpClient.newHttpClient();
     }
 
-    /**
-     * Envía un mensaje de texto a Gemini y retorna la respuesta como texto plano.
-     *
-     * @param textoUsuario el prompt / mensaje del usuario
-     * @return el texto de la respuesta generada por el modelo
-     * @throws IOException          si falla la comunicación de red o la API responde con error
-     * @throws InterruptedException si el hilo es interrumpido mientras espera la respuesta
-     */
-    // Cambiado para obligar al LLM a devolver un JSON
+
     public String enviarMensaje(String textoUsuario) throws IOException, InterruptedException {
         String url = ENDPOINT_BASE + MODELO + ":generateContent";
 

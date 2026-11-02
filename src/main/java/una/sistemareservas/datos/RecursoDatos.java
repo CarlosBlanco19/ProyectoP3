@@ -1,89 +1,111 @@
 package una.sistemareservas.datos;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
 import una.sistemareservas.dto.RecursoDTO;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// Acceso a la tabla recurso (cada recurso se devuelve con su categoría completa)
 public class RecursoDatos {
-    // Archivo de los recursos
-    private static final Path archivoRecursos = Path.of("src/main/resources/datos/recursos.json");
 
-    // Carga los datos de un archivo
-    // Recibo la lista con todas las categorias existentes de parametro
-    public List<RecursoDTO> serializar(List<CategoriaRecursoDTO> categorias) throws IOException {
-        // Crea una lista para los recursos sacados del archivo
+    private static final String SELECT_RECURSOS =
+            "SELECT r.pk_recurso, r.descripcion, c.pk_categoria, c.descripcion AS descripcion_categoria "
+            + "FROM recurso r JOIN categoriaRecursos c ON c.pk_categoria = r.fk_categoria ";
+
+    public List<RecursoDTO> listar() throws SQLException {
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(SELECT_RECURSOS + "ORDER BY r.pk_recurso")) {
+            return leer(ps);
+        }
+    }
+
+    public List<RecursoDTO> listarPorCategoria(int idCategoria) throws SQLException {
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(SELECT_RECURSOS + "WHERE r.fk_categoria = ? ORDER BY r.pk_recurso")) {
+            ps.setInt(1, idCategoria);
+            return leer(ps);
+        }
+    }
+
+    public RecursoDTO buscarPorId(String id) throws SQLException {
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(SELECT_RECURSOS + "WHERE r.pk_recurso = ?")) {
+            ps.setString(1, id);
+            List<RecursoDTO> lista = leer(ps);
+            return lista.isEmpty() ? null : lista.get(0);
+        }
+    }
+
+    /**
+     * Recursos de una categoría que están LIBRES en esa fecha y horario.
+     * Un recurso está ocupado si pertenece a una reserva ACTIVA del mismo día cuyo horario se traslapa:
+     *     inicioExistente < finNuevo  Y  finExistente > inicioNuevo
+     */
+    public List<RecursoDTO> listarDisponibles(int idCategoria, LocalDate fecha, LocalTime inicio, LocalTime fin)
+            throws SQLException {
+        String sql = SELECT_RECURSOS
+                + "WHERE r.fk_categoria = ? AND r.pk_recurso NOT IN ("
+                + "   SELECT rr.fk_recurso FROM reservaRecurso rr "
+                + "   JOIN reserva re ON re.pk_reserva = rr.fk_reserva "
+                + "   WHERE re.estado = 'ACTIVA' AND re.fecha = ? AND re.hora_init < ? AND re.hora_final > ?) "
+                + "ORDER BY r.pk_recurso";
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idCategoria);
+            ps.setObject(2, fecha);
+            ps.setObject(3, fin);
+            ps.setObject(4, inicio);
+            return leer(ps);
+        }
+    }
+
+    public void insertar(RecursoDTO recurso) throws SQLException {
+        String sql = "INSERT INTO recurso (pk_recurso, descripcion, fk_categoria) VALUES (?, ?, ?)";
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, recurso.getID());
+            ps.setString(2, recurso.getDescripcion());
+            ps.setInt(3, recurso.getCategoria().getID());
+            ps.executeUpdate();
+        }
+    }
+
+    public void actualizar(RecursoDTO recurso) throws SQLException {
+        String sql = "UPDATE recurso SET descripcion = ?, fk_categoria = ? WHERE pk_recurso = ?";
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, recurso.getDescripcion());
+            ps.setInt(2, recurso.getCategoria().getID());
+            ps.setString(3, recurso.getID());
+            ps.executeUpdate();
+        }
+    }
+
+    // Si el recurso está asignado a alguna reserva, MySQL lanza el error 1451 (llave foránea)
+    public void eliminar(String id) throws SQLException {
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement("DELETE FROM recurso WHERE pk_recurso = ?")) {
+            ps.setString(1, id);
+            ps.executeUpdate();
+        }
+    }
+
+    private List<RecursoDTO> leer(PreparedStatement ps) throws SQLException {
         List<RecursoDTO> recursos = new ArrayList<>();
-
-        // Si el archivo no existe devuelvo la lista vacia
-        if (!Files.exists(archivoRecursos)) {
-            return recursos;
-        }
-
-        // Leo el archivo
-        String contenido = Files.readString(archivoRecursos);
-
-        if (contenido.isBlank()) {
-            return recursos;
-        }
-
-        // Array JSON para manejar el contenido
-        JSONArray listaRecursos = new JSONArray(contenido);
-
-        // For que itera en el array JSON
-        for (int i = 0; i < listaRecursos.length(); i++) {
-            // Obtengo un "objeto" json de la lista
-            JSONObject objeto = listaRecursos.getJSONObject(i);
-
-            // Saco los datos de cada "objeto recurso"
-            String id = objeto.getString("id");
-            String descripcion = objeto.getString("descripcion");
-            int categoriaId = objeto.getInt("categoriaId");
-
-            // Reviso si el ID de la categoria esta en la lista de todas las categorias
-            CategoriaRecursoDTO categoria = null;
-            for (CategoriaRecursoDTO c : categorias) {
-                if (c.getID() == categoriaId) {
-                    categoria = c;
-                    break;
-                }
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                CategoriaRecursoDTO categoria = new CategoriaRecursoDTO(rs.getInt("pk_categoria"),
+                        rs.getString("descripcion_categoria"));
+                recursos.add(new RecursoDTO(rs.getString("pk_recurso"), rs.getString("descripcion"), categoria));
             }
-
-            // Construyo el RecursoDTO y lo añado a la lista final
-            recursos.add(new RecursoDTO(id, descripcion, categoria));
         }
-
-        // Devuelvo la lista de recursos
         return recursos;
     }
-
-    // Funcion para cargar datos a un archivo
-    // Recibe una lista de RecursoDTO
-    public void deserializar(List<RecursoDTO> recursos) throws IOException {
-        // Array en JSON para guardar en el archivo
-        JSONArray listaRecursos = new JSONArray();
-
-        // Itero en la lista de recursos
-        for (RecursoDTO recurso : recursos) {
-            // Creo un nuevo objeto JSON, y le añado los datos necesarios
-            JSONObject item = new JSONObject();
-            item.put("id", recurso.getID());
-            item.put("descripcion", recurso.getDescripcion());
-            item.put("categoriaId", recurso.getCategoria().getID());
-            // Inserto el "objeto" completo en la lista final, eso para cada RecursoDTO de la lista a guardar
-            listaRecursos.put(item);
-        }
-
-        // Por si no existen el archivo y/o las carpetas, los crea
-        Files.createDirectories(archivoRecursos.getParent());
-
-        // Sobrescribe el archivo con los datos de la lista pasada por parametro
-        Files.writeString(archivoRecursos, listaRecursos.toString(2));
-    }
 }
-

@@ -1,22 +1,19 @@
 package una.sistemareservas.controller;
-import una.sistemareservas.logic.UsuarioLogic;
-import una.sistemareservas.service.UsuarioService;
-import una.sistemareservas.utilidades.NavegadorPantallas;
-import una.sistemareservas.dto.UsuarioDTO;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
-
-
-
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import una.sistemareservas.protocolo.IService;
+import una.sistemareservas.proxy.ServiceProxy;
+import una.sistemareservas.utilidades.Dialogos;
+import una.sistemareservas.utilidades.NavegadorPantallas;
 
 public class CambiarClaveViewController {
 
-    private final UsuarioService usuarioService = new UsuarioService();
+    private final IService service = ServiceProxy.instancia();
 
     @FXML private TextField txtID;
     @FXML private PasswordField txtClaveActual;
@@ -26,39 +23,34 @@ public class CambiarClaveViewController {
     @FXML private Button btnCancelar;
     @FXML private Label lblAvisos;
 
-    @FXML private void initialize(){
+    @FXML
+    private void initialize() {
         btnAceptar.setOnAction(this::cambiarClave);
         btnCancelar.setOnAction(evento -> NavegadorPantallas.cambiarPantalla(evento, "/ui/LogInView.fxml"));
     }
 
-    private void cambiarClave(ActionEvent evento){
+    private void cambiarClave(ActionEvent evento) {
         String id = txtID.getText().trim();
         String claveActual = txtClaveActual.getText().trim();
         String claveNueva = txtClaveNueva.getText().trim();
         String confirmarClave = txtConfirmarClave.getText().trim();
 
-        UsuarioDTO usuario = usuarioService.buscarID(id);
-
-        if(usuario == null){
-            lblAvisos.setText("ID no encontrado");
-            return;
-        }
-
-        if(claveNueva.isEmpty() || confirmarClave.isEmpty() || claveActual.isEmpty()){
+        // Validaciones de la pantalla (las demás las hace el Backend)
+        if (id.isEmpty() || claveActual.isEmpty() || claveNueva.isEmpty() || confirmarClave.isEmpty()) {
             lblAvisos.setText("Rellene todos los campos");
             return;
         }
-
-        if(claveNueva.isEmpty() || !claveNueva.equals(confirmarClave)){
+        if (!claveNueva.equals(confirmarClave)) {
             lblAvisos.setText("La confirmación no coincide");
             return;
         }
 
-       if(usuarioService.cambiarClave(usuario, claveActual, claveNueva)){
+        try {
+            service.cambiarClave(id, claveActual, claveNueva);
+            Dialogos.informacion("Cambio de clave", "La clave se cambió correctamente.");
             NavegadorPantallas.cambiarPantalla(evento, "/ui/LogInView.fxml");
-       }else{
-            lblAvisos.setText("Clave actual incorrecta");
-       }
+        } catch (Exception e) {
+            lblAvisos.setText(e.getMessage());
+        }
     }
-
 }

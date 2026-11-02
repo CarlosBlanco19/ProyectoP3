@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Ventana emergente que se abre con el ícono "Ver" de una alerta -->
+<VBox prefWidth="420.0" spacing="8.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="una.sistemareservas.controller.AlertaDetalleViewController">
+   <children>
+      <GridPane hgap="12.0" vgap="8.0">
+        <columnConstraints>
+          <ColumnConstraints minWidth="90.0" />
+          <ColumnConstraints minWidth="230.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints />
+          <RowConstraints />
+          <RowConstraints />
+          <RowConstraints />
+          <RowConstraints />
+        </rowConstraints>
+         <children>
+            <Label text="Encargado:" />
+            <Label fx:id="lblEncargado" text="-" GridPane.columnIndex="1" />
+
+            <Label text="Fecha:" GridPane.rowIndex="1" />
+            <Label fx:id="lblFecha" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label text="Desde:" GridPane.rowIndex="2" />
+            <Label fx:id="lblDesde" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+            <Label text="Hasta:" GridPane.rowIndex="3" />
+            <Label fx:id="lblHasta" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+            <Label text="Recursos" GridPane.rowIndex="4" />
+            <ListView fx:id="lvRecursos" focusTraversable="false" prefHeight="190.0" prefWidth="230.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+         </children>
+      </GridPane>
+      <HBox alignment="CENTER_RIGHT">
+         <children>
+            <Button fx:id="btnOk" defaultButton="true" prefWidth="64.0" text="OK" />
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="12.0" left="14.0" right="14.0" top="16.0" />
+   </padding>
+</VBox>

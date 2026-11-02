@@ -1,11 +1,11 @@
 package una.sistemareservas.exception;
 
-public class CategoriaException extends RuntimeException {
-    public CategoriaException(String message) {
-        super(message);
+public class CategoriaException extends Exception {
+    public CategoriaException(String mensaje) {
+        super(mensaje);
     }
 
-    public CategoriaException(String msg, Throwable e){
-        super(msg, e);
+    public CategoriaException(String mensaje, Throwable causa) {
+        super(mensaje, causa);
     }
 }

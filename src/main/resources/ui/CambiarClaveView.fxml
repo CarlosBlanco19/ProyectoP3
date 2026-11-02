@@ -49,7 +49,7 @@
          </graphic></Button>
       <Label fx:id="lblUsuario" layoutX="83.0" layoutY="38.0" text="ID:" />
       <TextField fx:id="txtID" layoutX="115.0" layoutY="34.0" prefHeight="26.0" prefWidth="198.0" promptText="Usuario" />
-      <Label fx:id="lblAvisos" layoutX="10.0" layoutY="6.0" prefHeight="18.0" prefWidth="108.0" textFill="RED">
+      <Label fx:id="lblAvisos" layoutX="10.0" layoutY="6.0" prefHeight="18.0" prefWidth="320.0" textFill="RED">
          <font>
             <Font size="7.0" />
          </font>

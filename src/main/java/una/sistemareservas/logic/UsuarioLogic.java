@@ -1,112 +1,80 @@
 package una.sistemareservas.logic;
+
 import una.sistemareservas.datos.UsuarioDatos;
-import una.sistemareservas.dto.UsuarioDTO;
 import una.sistemareservas.dto.AdministradorDTO;
 import una.sistemareservas.dto.FuncionarioDTO;
+import una.sistemareservas.dto.UsuarioDTO;
+import una.sistemareservas.exception.UsuarioException;
 
+import java.sql.SQLException;
 
-import una.sistemareservas.utilidades.Busqueda;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.io.IOException;
-
+// Login y cambio de clave
 public class UsuarioLogic {
 
-    private List<UsuarioDTO> usuarios =  new ArrayList<>();
+    private static final int LARGO_MAXIMO_CLAVE = 50;
+
     private final UsuarioDatos usuarioDatos = new UsuarioDatos();
 
-    private void guardar() {
+    /**
+     * Devuelve el usuario si el ID y la clave son correctos.
+     * El usuario que se devuelve NO trae la clave (no tiene por qué viajar al Frontend).
+     */
+    public UsuarioDTO login(String id, String clave) throws UsuarioException {
+        if (estaVacio(id) || estaVacio(clave)) {
+            throw new UsuarioException("Debe ingresar el usuario y la clave");
+        }
+
+        UsuarioDTO usuario;
         try {
-            usuarioDatos.deserializar(usuarios);
-        } catch (IOException e) {
-            e.printStackTrace();
+            usuario = usuarioDatos.buscarUsuario(id.trim());
+        } catch (SQLException e) {
+            throw new UsuarioException(ErroresBD.mensaje("validar el usuario", e), e);
         }
-    }
-    public UsuarioLogic(){
-        List<UsuarioDTO> listos;
-        try{
-            listos = usuarioDatos.serializar();
-        }catch (IOException e){
-            e.printStackTrace();
-            listos = new ArrayList<>();
-        }
-        usuarios = listos;
 
-        if(usuarios.isEmpty()){
-            usuarios.add(new AdministradorDTO("admin","1234")); //agrega un admin predeterminado
-            guardar();
+        // Mismo mensaje en los dos casos para no darle pistas a alguien que esté adivinando usuarios
+        if (usuario == null || !usuario.getClave().equals(clave)) {
+            throw new UsuarioException("Usuario o clave incorrectos");
         }
+        return sinClave(usuario);
     }
 
-
-    public UsuarioDTO buscarID(String id){
-        return Busqueda.buscarID(usuarios, id, UsuarioDTO::getID);
-    }
-
-
-    public boolean cambiarClave(UsuarioDTO usuario, String claveActual, String nuevaClave){
-        if(usuario == null || claveActual == null || nuevaClave== null) {
-            return false;
+    public void cambiarClave(String id, String claveActual, String claveNueva) throws UsuarioException {
+        if (estaVacio(id) || estaVacio(claveActual) || estaVacio(claveNueva)) {
+            throw new UsuarioException("Rellene todos los campos");
+        }
+        if (claveNueva.length() > LARGO_MAXIMO_CLAVE) {
+            throw new UsuarioException("La clave nueva no puede tener más de " + LARGO_MAXIMO_CLAVE + " caracteres");
+        }
+        if (claveNueva.contains(" ")) {
+            throw new UsuarioException("La clave nueva no puede tener espacios");
         }
 
-        if(!usuario.getClave().equals(claveActual)){
-            return false;
-        }
-        usuario.setClave(nuevaClave);
-        guardar();
-        return true;
-    }
-
-    public UsuarioDTO autenticar(String id, String clave){
-        UsuarioDTO usuario = buscarID(id);
-        if(usuario == null){
-            return null;
-        }
-
-        if(!usuario.getClave().equals(clave)){
-            return null;
-        }
-        return usuario;
-    }
-
-    public boolean agregar(UsuarioDTO usuario){
-        if(usuario == null || buscarID(usuario.getID()) != null){
-            return false;
-        }
-        usuarios.add(usuario);
-        guardar();
-        return true;
-    }
-
-    public boolean eliminar (String id){
-        UsuarioDTO usuario = buscarID(id);
-        if(usuario == null) {
-            return false;
-        }
-
-        usuarios.remove(usuario);
-        guardar();
-        return true;
-    }
-
-    public List<UsuarioDTO> listar(){
-        return usuarios;
-    }
-
-    public List<FuncionarioDTO> listarFuncionarios(){
-        List<FuncionarioDTO> funcionarios = new ArrayList<>();
-        for(UsuarioDTO usuario : usuarios) {
-            if (usuario instanceof FuncionarioDTO) {
-                funcionarios.add((FuncionarioDTO) usuario);
+        try {
+            UsuarioDTO usuario = usuarioDatos.buscarUsuario(id.trim());
+            if (usuario == null) {
+                throw new UsuarioException("ID no encontrado");
             }
+            if (!usuario.getClave().equals(claveActual)) {
+                throw new UsuarioException("Clave actual incorrecta");
+            }
+            if (claveActual.equals(claveNueva)) {
+                throw new UsuarioException("La clave nueva debe ser diferente a la actual");
+            }
+            usuarioDatos.actualizarClave(usuario.getID(), claveNueva);
+        } catch (SQLException e) {
+            throw new UsuarioException(ErroresBD.mensaje("cambiar la clave", e), e);
         }
-        return funcionarios;
-     }
+    }
 
-     public void guardarCambios(){
-        guardar();
-     }
+    // Copia del usuario sin la clave
+    private UsuarioDTO sinClave(UsuarioDTO usuario) {
+        if (usuario instanceof FuncionarioDTO funcionario) {
+            return new FuncionarioDTO(funcionario.getID(), funcionario.getNombre(), funcionario.getTelefono());
+        }
+        return new AdministradorDTO(usuario.getID(), null);
+    }
+
+    private boolean estaVacio(String texto) {
+        return texto == null || texto.isBlank();
+    }
 }
-
-

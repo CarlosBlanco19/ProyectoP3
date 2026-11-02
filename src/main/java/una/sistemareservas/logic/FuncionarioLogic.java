@@ -1,77 +1,124 @@
 package una.sistemareservas.logic;
 
+import una.sistemareservas.datos.UsuarioDatos;
 import una.sistemareservas.dto.FuncionarioDTO;
-import una.sistemareservas.dto.UsuarioDTO;
+import una.sistemareservas.exception.UsuarioException;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 
+// Mantenimiento de funcionarios (solo el administrador)
 public class FuncionarioLogic {
 
-    private final UsuarioLogic usuarioLogic;
+    private final UsuarioDatos usuarioDatos = new UsuarioDatos();
 
-    public FuncionarioLogic(UsuarioLogic usuarioLogic) {
-        this.usuarioLogic = usuarioLogic;
-    }
-
-    public boolean eliminar(String id){
-        FuncionarioDTO user = buscarID(id);
-        if(user == null){
-            return false;
+    public List<FuncionarioDTO> listar() throws UsuarioException {
+        try {
+            return usuarioDatos.listarFuncionarios();
+        } catch (SQLException e) {
+            throw new UsuarioException(ErroresBD.mensaje("cargar los funcionarios", e), e);
         }
-        return usuarioLogic.eliminar(id);
     }
 
-    public boolean agregar(String id, String nombre, String telefono){
-
-        if(id == null || nombre.isBlank() || id.isBlank() || nombre == null){
-            return false;
+    public FuncionarioDTO buscarPorId(String id) throws UsuarioException {
+        if (id == null || id.isBlank()) {
+            return null;
         }
-        FuncionarioDTO funcionario = new FuncionarioDTO(id, nombre, telefono);
-        return usuarioLogic.agregar(funcionario);
-    }
-
-    public boolean actualizar(String id, String nom, String tel){
-        FuncionarioDTO func = buscarID(id);
-
-        if(func == null ){
-            return false;
+        try {
+            return usuarioDatos.buscarFuncionario(id.trim());
+        } catch (SQLException e) {
+            throw new UsuarioException(ErroresBD.mensaje("buscar el funcionario", e), e);
         }
-
-        func.setNombre(nom);
-        func.setTelefono(tel);
-        usuarioLogic.guardarCambios();
-
-        return true;
     }
 
-    public List<FuncionarioDTO> listar(){
-        return usuarioLogic.listarFuncionarios();
-    }
-
-
-    public FuncionarioDTO buscarID(String id){
-        UsuarioDTO usuario = usuarioLogic.buscarID(id);
-        if(usuario instanceof FuncionarioDTO){
-            return (FuncionarioDTO) usuario;
+    public List<FuncionarioDTO> buscarPorNombre(String nombre) throws UsuarioException {
+        if (nombre == null || nombre.isBlank()) {
+            return listar();
         }
-        return null;
+        try {
+            return usuarioDatos.buscarFuncionariosPorNombre(nombre.trim());
+        } catch (SQLException e) {
+            throw new UsuarioException(ErroresBD.mensaje("buscar funcionarios", e), e);
+        }
     }
 
-    public List<FuncionarioDTO> buscarNombre(String nombre){
-        List<FuncionarioDTO> res = new ArrayList<>(); // lista para ir guardado coincidencias
-
-        if(nombre == null || nombre.isBlank()){
-            return res; //list vacia
-        }
-
-        String busqueda = nombre.toLowerCase(); // para no distinguir minusculas y mayusculas
-        for(FuncionarioDTO funcionario : usuarioLogic.listarFuncionarios()) {
-            if (funcionario.getNombre().toLowerCase().contains(busqueda)) { //buscar si contiene el texto buscado
-                res.add(funcionario);
+    public void agregar(FuncionarioDTO funcionario) throws UsuarioException {
+        validar(funcionario);
+        String id = funcionario.getID().trim();
+        try {
+            if (usuarioDatos.buscarUsuario(id) != null) {
+                throw new UsuarioException("Ya existe un usuario con el ID " + id);
             }
+            FuncionarioDTO limpio = new FuncionarioDTO(id, funcionario.getNombre().trim(), funcionario.getTelefono().trim());
+            usuarioDatos.insertarFuncionario(limpio, id); // La clave inicial es el mismo ID
+        } catch (SQLException e) {
+            if (ErroresBD.esDuplicado(e)) {
+                throw new UsuarioException("Ya existe un usuario con el ID " + id);
+            }
+            throw new UsuarioException(ErroresBD.mensaje("guardar el funcionario", e), e);
         }
-        return res;
     }
 
+    public void actualizar(FuncionarioDTO funcionario) throws UsuarioException {
+        validar(funcionario);
+        String id = funcionario.getID().trim();
+        try {
+            if (usuarioDatos.buscarFuncionario(id) == null) {
+                throw new UsuarioException("No existe un funcionario con el ID " + id);
+            }
+            usuarioDatos.actualizarFuncionario(
+                    new FuncionarioDTO(id, funcionario.getNombre().trim(), funcionario.getTelefono().trim()));
+        } catch (SQLException e) {
+            throw new UsuarioException(ErroresBD.mensaje("actualizar el funcionario", e), e);
+        }
+    }
+
+    public void eliminar(String id) throws UsuarioException {
+        if (id == null || id.isBlank()) {
+            throw new UsuarioException("Debe seleccionar un funcionario");
+        }
+        try {
+            if (usuarioDatos.buscarFuncionario(id.trim()) == null) {
+                throw new UsuarioException("No existe un funcionario con el ID " + id.trim());
+            }
+            usuarioDatos.eliminarFuncionario(id.trim());
+        } catch (SQLException e) {
+            if (ErroresBD.esLlaveForanea(e)) {
+                throw new UsuarioException("No se puede eliminar el funcionario porque tiene reservas registradas");
+            }
+            throw new UsuarioException(ErroresBD.mensaje("eliminar el funcionario", e), e);
+        }
+    }
+
+    // Validaciones que no necesitan la base de datos
+    void validar(FuncionarioDTO funcionario) throws UsuarioException {
+        if (funcionario == null) {
+            throw new UsuarioException("No se recibió el funcionario");
+        }
+        String id = funcionario.getID();
+        String nombre = funcionario.getNombre();
+        String telefono = funcionario.getTelefono();
+
+        if (id == null || id.isBlank()) {
+            throw new UsuarioException("Debe ingresar un ID");
+        }
+        if (id.trim().contains(" ")) {
+            throw new UsuarioException("El ID no puede tener espacios");
+        }
+        if (id.trim().length() > 30) {
+            throw new UsuarioException("El ID no puede tener más de 30 caracteres");
+        }
+        if (nombre == null || nombre.isBlank()) {
+            throw new UsuarioException("Debe ingresar el nombre");
+        }
+        if (nombre.trim().length() > 50) {
+            throw new UsuarioException("El nombre no puede tener más de 50 caracteres");
+        }
+        if (telefono == null || telefono.isBlank()) {
+            throw new UsuarioException("Debe ingresar el teléfono");
+        }
+        if (!telefono.trim().matches("[0-9 +-]{8,20}")) {
+            throw new UsuarioException("El teléfono solo puede tener números (mínimo 8)");
+        }
+    }
 }

@@ -5,210 +5,162 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
 import una.sistemareservas.dto.EstadoReserva;
 import una.sistemareservas.dto.RecursoDTO;
 import una.sistemareservas.dto.ReservaDTO;
-import una.sistemareservas.exception.ReservaException;
-import una.sistemareservas.service.CategoriaService;
-import una.sistemareservas.service.RecursoService;
-import una.sistemareservas.service.ReservaService;
-import una.sistemareservas.service.UsuarioService;
+import una.sistemareservas.protocolo.IService;
+import una.sistemareservas.proxy.ServiceProxy;
+import una.sistemareservas.utilidades.Dialogos;
+import una.sistemareservas.utilidades.ReportePDF;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CalendarizacionViewController {
+public class CalendarizacionViewController implements Refrescable {
+
+    private static final int PRIMERA_HORA = 6;
+    private static final int ULTIMA_HORA = 21;
 
     @FXML private Button btnBuscarCalendarizacion;
     @FXML private Button btnImprimirCalendarizacion;
     @FXML private DatePicker dtCalendarizacion;
     @FXML private ComboBox<CategoriaRecursoDTO> cbCategoriaCalendarizacion;
-    //map hace dinamicas las columnas segun la cantidad de recursos en cada hora
+    // Cada fila es un Map: "hora" -> "08:00" y "<id del recurso>" -> texto de la celda
     @FXML private TableView<Map<String, String>> tabCalendarizacion;
-    @FXML private TableColumn<Map<String,String>, String> colHoraCalendarizacion;
+    @FXML private TableColumn<Map<String, String>, String> colHoraCalendarizacion;
     @FXML private Label lblAvisos;
 
-    private final CategoriaService categoriaService = new CategoriaService();
-    private final UsuarioService usuarioService = new UsuarioService();
-    private ReservaService reservaService;
-
-    private final RecursoService recursoService   = new RecursoService(categoriaService);
+    private final IService service = ServiceProxy.instancia();
 
     @FXML
-    private void initialize(){
-
-        //construccion con exception
-        try{
-            reservaService = new ReservaService(usuarioService,categoriaService, recursoService);
-
-        }catch(ReservaException e){
-            lblAvisos.setText("No se cargaron los datos");
-
-        }
-        //saca la data de hora
-        colHoraCalendarizacion.setCellValueFactory(cellDato -> new SimpleStringProperty(cellDato.getValue().get("hora")));
-
-        cbCategoriaCalendarizacion.setItems(FXCollections.observableArrayList(categoriaService.listar()));
-
+    private void initialize() {
+        colHoraCalendarizacion.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().get("hora")));
         btnBuscarCalendarizacion.setOnAction(this::buscarCalendarizacion);
         btnImprimirCalendarizacion.setOnAction(this::imprimirCalendarizacion);
     }
 
+    @Override
+    public void refrescar() {
+        try {
+            CategoriaRecursoDTO seleccionada = cbCategoriaCalendarizacion.getValue();
+            cbCategoriaCalendarizacion.setItems(FXCollections.observableArrayList(service.listarCategorias()));
+            cbCategoriaCalendarizacion.setValue(seleccionada);
+            if (seleccionada != null && dtCalendarizacion.getValue() != null) {
+                buscarCalendarizacion(null); // Para ver las reservas nuevas de los demás
+            }
+        } catch (Exception e) {
+            lblAvisos.setText(e.getMessage());
+        }
+    }
 
+    private void buscarCalendarizacion(ActionEvent event) {
+        LocalDate fecha = dtCalendarizacion.getValue();
+        CategoriaRecursoDTO categoria = cbCategoriaCalendarizacion.getValue();
+        if (categoria == null || fecha == null) {
+            lblAvisos.setText("Debe seleccionar una fecha y categoria");
+            return;
+        }
+        try {
+            List<RecursoDTO> recursos = service.listarRecursosPorCategoria(categoria.getID());
+            List<ReservaDTO> reservas = service.listarReservas();
+            definirColumnas(recursos);
+            definirFilas(fecha, recursos, reservas);
+            lblAvisos.setText(recursos.isEmpty() ? "Esa categoría no tiene recursos" : "");
+        } catch (Exception e) {
+            lblAvisos.setText(e.getMessage());
+        }
+    }
 
-    private void defColumna(List<RecursoDTO> recursos){
-        //limpia toda data excepto horas
+    // Una columna por recurso de la categoría
+    private void definirColumnas(List<RecursoDTO> recursos) {
         tabCalendarizacion.getColumns().setAll(colHoraCalendarizacion);
-
-        for(RecursoDTO recurso : recursos){
-            TableColumn<Map<String,String>, String> colRecurso = new TableColumn<>(recurso.getID());
-            colRecurso.setCellValueFactory(celDato -> new SimpleStringProperty(celDato.getValue().get(recurso.getID())));
-            //Esto es para colorear las celdas.
-            colRecurso.setCellFactory(columna -> new javafx.scene.control.TableCell<>() {
+        for (RecursoDTO recurso : recursos) {
+            TableColumn<Map<String, String>, String> columna = new TableColumn<>(recurso.getID());
+            columna.setCellValueFactory(celda -> new SimpleStringProperty(celda.getValue().get(recurso.getID())));
+            columna.setCellFactory(col -> new TableCell<>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
-                    if (empty || item == null || item.trim().isEmpty()) {
+                    if (empty || item == null || item.isBlank()) {
                         setText("");
-                        setStyle(""); // Blanco por defecto
+                        setStyle("");
                     } else {
                         setText(item);
-                        // Fondo amarillo pastel, igual al de la imagen
                         setStyle("-fx-background-color: #fff2cc; -fx-border-color: lightgray; -fx-border-width: 0.5px; -fx-alignment: center-left;");
                     }
                 }
             });
-
-            tabCalendarizacion.getColumns().add(colRecurso);
+            tabCalendarizacion.getColumns().add(columna);
         }
     }
 
-    private String txtCelda(RecursoDTO recurso, LocalDate date, LocalTime hora){
-        for(ReservaDTO reserva : reservaService.getReservas()){
-            //quita inactivas, distintas fechas y recursos
-            if(reserva.getEstado() != EstadoReserva.ACTIVA){continue;}
-            if(!reserva.getFecha().equals(date)){continue;}
-            if(!reserva.getRecursos().contains(recurso)){continue;}
-
-            //verifica horas para devolver la actividad y el nombre txt
-            if(!hora.isBefore(reserva.getHora_init()) && hora.isBefore(reserva.getHora_final())){
-
-                return reserva.getActividad() + "-" + reserva.getFuncionario().getNombre();
-            }
-        }
-        return "";
-    }
-
-    private void defFila(LocalDate time, List<RecursoDTO> recursos){
-
+    // Una fila por hora
+    private void definirFilas(LocalDate fecha, List<RecursoDTO> recursos, List<ReservaDTO> reservas) {
         ObservableList<Map<String, String>> filas = FXCollections.observableArrayList();
-
-        //se arma una fila por cada hora
-        for(int hora = 7; hora <= 23; hora++) {
-
-            LocalTime tActual = LocalTime.of(hora, 0);
+        for (int hora = PRIMERA_HORA; hora <= ULTIMA_HORA; hora++) {
+            LocalTime horaActual = LocalTime.of(hora, 0);
             Map<String, String> fila = new HashMap<>();
             fila.put("hora", String.format("%02d:00", hora));
-
-            //por cada recurso hay una entrada
-            //trae el texto de la celda (recurso, hora o fecha)
             for (RecursoDTO recurso : recursos) {
-                fila.put(recurso.getID(), txtCelda(recurso, time, tActual));
+                fila.put(recurso.getID(), textoCelda(reservas, recurso, fecha, horaActual));
             }
             filas.add(fila);
         }
         tabCalendarizacion.setItems(filas);
     }
 
-
-    private void buscarCalendarizacion(ActionEvent event){
-        if(reservaService == null){
-            lblAvisos.setText("No se cargaron las reservas");
-            return;
+    // "Actividad - Funcionario" si el recurso está reservado a esa hora; vacío si está libre
+    private String textoCelda(List<ReservaDTO> reservas, RecursoDTO recurso, LocalDate fecha, LocalTime hora) {
+        for (ReservaDTO reserva : reservas) {
+            if (reserva.getEstado() != EstadoReserva.ACTIVA
+                    || !reserva.getFecha().equals(fecha)
+                    || !reserva.getRecursos().contains(recurso)) { // contains usa equals por ID
+                continue;
+            }
+            if (!hora.isBefore(reserva.getHora_init()) && hora.isBefore(reserva.getHora_final())) {
+                return reserva.getActividad() + " - " + reserva.getFuncionario().getNombre();
+            }
         }
-
-        LocalDate fecha = dtCalendarizacion.getValue();
-        CategoriaRecursoDTO categoria = cbCategoriaCalendarizacion.getValue();
-
-        if(categoria == null || fecha == null){
-            lblAvisos.setText("Debe seleccionar una fecha y categoria");
-            return;
-        }
-
-        List<RecursoDTO> recursos= recursoService.listarPorCategoria(categoria.getID());
-        defColumna(recursos);
-        defFila(fecha,recursos);
+        return "";
     }
 
     @FXML
     private void imprimirCalendarizacion(ActionEvent event) {
-        // tira exception si no hay data cargada.
-        if (dtCalendarizacion.getValue() == null || tabCalendarizacion.getItems().isEmpty()) {
-            mostrarMensaje("Advertencia", "Debe buscar una calendarización antes de imprimir.");
+        if (dtCalendarizacion.getValue() == null || cbCategoriaCalendarizacion.getValue() == null
+                || tabCalendarizacion.getItems().isEmpty()) {
+            Dialogos.advertencia("Debe buscar una calendarización antes de imprimir.");
             return;
         }
-        //Esto es para que le salga para ver donde guardar el archivo y con que nombre en la com´pu.
-        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
-        fileChooser.setTitle("Guardar Reporte de Calendarización");
-        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
-        fileChooser.setInitialFileName("Calendarizacion_" + dtCalendarizacion.getValue() + ".pdf");
-
-        java.io.File file = fileChooser.showSaveDialog(btnImprimirCalendarizacion.getScene().getWindow());
-
-        if (file != null) {
-            try {
-                com.itextpdf.text.Document documento = new com.itextpdf.text.Document(com.itextpdf.text.PageSize.A4.rotate());
-                com.itextpdf.text.pdf.PdfWriter.getInstance(documento, new java.io.FileOutputStream(file));
-                documento.open();
-
-                // Títulos del PDF
-                documento.add(new com.itextpdf.text.Paragraph("Reporte de Calendarizacion de Recursos"));
-                documento.add(new com.itextpdf.text.Paragraph("Fecha: " + dtCalendarizacion.getValue() + " | Categoria: " + cbCategoriaCalendarizacion.getValue().getDescripcion()));
-                documento.add(new com.itextpdf.text.Paragraph(" "));
-
-                // Cuantas columnas tenga la tabla en JavaFX, tendrá la del PDF
-                int numColumnas = tabCalendarizacion.getColumns().size();
-                com.itextpdf.text.pdf.PdfPTable tablaPdf = new com.itextpdf.text.pdf.PdfPTable(numColumnas);
-                tablaPdf.setWidthPercentage(100);
-
-                // 1. Imprimir encabezados
-                for (TableColumn<Map<String, String>, ?> col : tabCalendarizacion.getColumns()) {
-                    com.itextpdf.text.pdf.PdfPCell celda = new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(col.getText()));
-                    celda.setBackgroundColor(new com.itextpdf.text.BaseColor(200, 200, 200));
-                    tablaPdf.addCell(celda);
-                }
-
-                // 2. Imprimir contenido fila por fila
-                for (Map<String, String> fila : tabCalendarizacion.getItems()) {
-                    for (TableColumn<Map<String, String>, ?> col : tabCalendarizacion.getColumns()) {
-                        // Comprobamos si es la columna de "Hora" o una de recurso
-                        String key = (col == colHoraCalendarizacion) ? "hora" : col.getText();
-                        String valor = fila.get(key);
-
-                        tablaPdf.addCell(valor == null || valor.isEmpty() ? " " : valor);
-                    }
-                }
-
-                documento.add(tablaPdf);
-                documento.close();
-
-                mostrarMensaje("Éxito", "¡Reporte PDF generado exitosamente!");
-
-            } catch (Exception e) {
-                mostrarMensaje("Error", "Error al guardar el PDF: " + e.getMessage());
-            }
+        List<TableColumn<Map<String, String>, ?>> columnas = tabCalendarizacion.getColumns();
+        String[] encabezados = new String[columnas.size()];
+        for (int i = 0; i < columnas.size(); i++) {
+            encabezados[i] = columnas.get(i).getText();
         }
-    }
-
-    private void mostrarMensaje(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        List<String[]> filas = new ArrayList<>();
+        for (Map<String, String> fila : tabCalendarizacion.getItems()) {
+            String[] valores = new String[columnas.size()];
+            valores[0] = fila.get("hora");
+            for (int i = 1; i < columnas.size(); i++) {
+                valores[i] = fila.get(columnas.get(i).getText());
+            }
+            filas.add(valores);
+        }
+        ReportePDF.exportarTabla(btnImprimirCalendarizacion.getScene().getWindow(),
+                "Calendarizacion_" + dtCalendarizacion.getValue() + ".pdf",
+                "Reporte de Calendarización de Recursos",
+                "Fecha: " + dtCalendarizacion.getValue() + " | Categoría: " + cbCategoriaCalendarizacion.getValue().getDescripcion(),
+                encabezados, filas);
     }
 }

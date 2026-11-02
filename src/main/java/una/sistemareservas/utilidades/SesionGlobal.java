@@ -1,20 +1,42 @@
 package una.sistemareservas.utilidades;
 
-public class SesionGlobal {
+import una.sistemareservas.dto.FuncionarioDTO;
+import una.sistemareservas.dto.Rol;
+import una.sistemareservas.dto.UsuarioDTO;
 
-    private static String idFuncionarioActual;
+// Guarda quién inició sesión, para que cualquier pantalla lo pueda consultar
+public final class SesionGlobal {
 
-    // Método para guardar el ID cuando inicie sesión
-    public static void setFuncionarioActual(String id) {
-        idFuncionarioActual = id;
+    private static UsuarioDTO usuarioActual;
+
+    private SesionGlobal() {
     }
 
-    // Método para preguntar quién está usando el sistema en cualquier pantalla
+    public static void iniciarSesion(UsuarioDTO usuario) {
+        usuarioActual = usuario;
+    }
+
+    public static UsuarioDTO getUsuario() {
+        return usuarioActual;
+    }
+
+    // ID del usuario que está usando el sistema (null si nadie ha iniciado sesión)
     public static String getFuncionarioActual() {
-        return idFuncionarioActual;
+        return usuarioActual != null ? usuarioActual.getID() : null;
+    }
+
+    public static boolean esAdministrador() {
+        return usuarioActual != null && usuarioActual.getRol() == Rol.ADMINISTRADOR;
+    }
+
+    public static String getNombre() {
+        if (usuarioActual instanceof FuncionarioDTO funcionario) {
+            return funcionario.getNombre();
+        }
+        return usuarioActual != null ? usuarioActual.getID() : "";
     }
 
     public static void cerrarSesion() {
-        idFuncionarioActual = null;
+        usuarioActual = null;
     }
 }

@@ -1,51 +1,59 @@
 package una.sistemareservas.controller;
 
-import una.sistemareservas.dto.UsuarioDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
-import una.sistemareservas.service.UsuarioService;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import una.sistemareservas.dto.UsuarioDTO;
+import una.sistemareservas.model.AlertasModel;
+import una.sistemareservas.protocolo.IService;
+import una.sistemareservas.proxy.ServiceProxy;
+import una.sistemareservas.utilidades.Dialogos;
 import una.sistemareservas.utilidades.NavegadorPantallas;
-
+import una.sistemareservas.utilidades.SesionGlobal;
 
 public class LogInViewController {
 
-
-    //bandera
-
-    private final UsuarioService usuarioService = new UsuarioService();
-
-    public static UsuarioDTO usuarioLogueado = null;
+    // El controlador solo conoce la interfaz IService: no sabe que por debajo hay un socket
+    private final IService service = ServiceProxy.instancia();
 
     @FXML private TextField txtUsuario;
     @FXML private PasswordField txtClave;
     @FXML private Button btnIngresar;
-    @FXML private Button btnCancelar;
     @FXML private Button btnCambiar;
     @FXML private Label lblAviso;
 
-    @FXML private void initialize(){
+    @FXML
+    private void initialize() {
         btnIngresar.setOnAction(this::intentarIngresar);
+        btnIngresar.setDefaultButton(true); // Enter = Ingresar
         btnCambiar.setOnAction(evento -> NavegadorPantallas.cambiarPantalla(evento, "/ui/CambiarClaveView.fxml"));
     }
 
-    private void intentarIngresar(ActionEvent evento){
+    private void intentarIngresar(ActionEvent evento) {
         String id = txtUsuario.getText().trim();
         String clave = txtClave.getText().trim();
 
-        UsuarioDTO usuario =  usuarioService.autenticar(id, clave);
+        try {
+            UsuarioDTO usuario = service.login(id, clave);
+            SesionGlobal.iniciarSesion(usuario);
+            AlertasModel.getInstancia().limpiar(); // Las alertas son solo de esta sesión
 
-        if(usuario != null){
-            usuarioLogueado = usuario;
-            una.sistemareservas.utilidades.SesionGlobal.setFuncionarioActual(usuario.getID());
+            Stage ventana = (Stage) btnIngresar.getScene().getWindow();
             NavegadorPantallas.cambiarPantalla(evento, "/ui/MenuPrincipalView.fxml");
-        }else{
-            lblAviso.setText("Usuario o contraseña incorrectos");
+            // Como en el enunciado: "SISTEMA DE RESERVAS - 222 (FUNCIONARIO)"
+            ventana.setTitle("SISTEMA DE RESERVAS - " + usuario.getID() + " (" + usuario.getRol() + ")");
+        } catch (Exception e) {
+            if (!ServiceProxy.instancia().estaConectado()) {
+                // No se pudo hablar con el Backend: se explica en una ventana (no cabe en la etiqueta)
+                lblAviso.setText("Sin conexión");
+                Dialogos.error(e.getMessage());
+            } else {
+                lblAviso.setText(e.getMessage());
+            }
         }
     }
-
-
 }

@@ -3,38 +3,43 @@ package una.sistemareservas.controller;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import una.sistemareservas.dto.CategoriaRecursoDTO;
+import una.sistemareservas.dto.FuncionarioDTO;
 import una.sistemareservas.dto.RecursoDTO;
 import una.sistemareservas.dto.ReservaDTO;
-import una.sistemareservas.exception.ReservaException;
-import una.sistemareservas.service.*;
-import una.sistemareservas.dto.CategoriaRecursoDTO;
+import una.sistemareservas.ia.GeminiService;
+import una.sistemareservas.protocolo.IService;
+import una.sistemareservas.proxy.ServiceProxy;
+import una.sistemareservas.utilidades.Dialogos;
+import una.sistemareservas.utilidades.ReportePDF;
+import una.sistemareservas.utilidades.SesionGlobal;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import javafx.stage.FileChooser;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.stream.Collectors;
 
+public class ReservasViewController implements Refrescable {
 
-public class ReservasViewController {
     @FXML private Label lblAvisosReservas;
     @FXML private TextArea txtPromptFrase;
     @FXML private TextField txtActividad;
@@ -55,31 +60,17 @@ public class ReservasViewController {
     @FXML private TableColumn<ReservaDTO, String> colEstadoReservas;
     @FXML private Button btnImprimirReservas;
 
-    private ReservaService reservaLogic;
-    private CategoriaService categoriaLogic;
-    //UsuarioDTO usuario = LogInViewController.usuarioLogueado;
-
-    GeminiService geminiService;
+    private final IService service = ServiceProxy.instancia();
 
     @FXML
-    public void initialize(){
-        this.categoriaLogic = new CategoriaService();
-        RecursoService recursoLogic = new RecursoService(categoriaLogic);
-        UsuarioService usuarioLogic = new UsuarioService();
-        try {
-            this.reservaLogic = new ReservaService(usuarioLogic, this.categoriaLogic, recursoLogic);
-        } catch (Exception e) {
-            // Si el archivo de reservas falla al cargar, mostramos el error sin que la app colapse
-            mostrarAlerta("Error al cargar los datos de reservas: " + e.getMessage());
-        }
+    public void initialize() {
         for (int h = 6; h < 22; h++) {
             String horaFormateada = String.format("%02d:00", h);
             cbHoraFinal.getItems().add(horaFormateada);
             cbHoraInicio.getItems().add(horaFormateada);
         }
-        //Esto es para que se pueda seleccionar multiples categorias.
+        // Para que se puedan seleccionar varias categorías (Ctrl + clic)
         lvListaCategorias.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        // 3. Configurar cómo se ve el texto en el ListView (para que muestre la descripción)
         lvListaCategorias.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(CategoriaRecursoDTO item, boolean empty) {
@@ -88,87 +79,92 @@ public class ReservasViewController {
             }
         });
 
-        // 4. Configurar las columnas de la tabla "Mis reservas"
+        // No se pueden escoger fechas que ya pasaron
+        dtReservarFecha.setDayCellFactory(selector -> new javafx.scene.control.DateCell() {
+            @Override
+            public void updateItem(LocalDate fecha, boolean vacia) {
+                super.updateItem(fecha, vacia);
+                setDisable(vacia || fecha.isBefore(LocalDate.now()));
+            }
+        });
+
+        // Columnas de la tabla "Mis reservas"
         colIdReservas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getID()));
         colActividadReservas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getActividad()));
         colFechaReservas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFecha().toString()));
         colHorarioReservas.setCellValueFactory(cell -> new SimpleStringProperty(
-                cell.getValue().getHora_init() + " - " + cell.getValue().getHora_final()
-        ));
+                cell.getValue().getHora_init() + " - " + cell.getValue().getHora_final()));
         colEstadoReservas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getEstado().toString()));
+        colRecursosReservas.setCellValueFactory(cell -> new SimpleStringProperty(
+                cell.getValue().getRecursos().stream().map(RecursoDTO::getID).collect(Collectors.joining(", "))));
 
-        // Extraer y unir los IDs de los recursos asignados
-        colRecursosReservas.setCellValueFactory(cell -> {
-            List<RecursoDTO> recursos = cell.getValue().getRecursos();
-            String idsUnidos = recursos.stream().map(RecursoDTO::getID).collect(Collectors.joining(", "));
-            return new SimpleStringProperty(idsUnidos);
-        });
-
-        // 5. Asignar acciones a los botones
         btnGuardarReserva.setOnAction(e -> reservar());
         btnLimpiarReserva.setOnAction(e -> limpiarFormulario());
         btnCancelarReserva.setOnAction(e -> cancelarReserva());
         btnImprimirReservas.setOnAction(this::imprimirReservas);
         btnExtraerIA.setOnAction(e -> reservarConIA());
-
-        cargarDatosIniciales();
     }
 
-    private void cargarDatosIniciales() {
-        if (categoriaLogic != null) {
-            lvListaCategorias.getItems().setAll(categoriaLogic.listar());
-        }
-        actualizarTablaReservas();
-    }
-
-    private void actualizarTablaReservas() {
-        if (reservaLogic != null) {
-            String idFuncionario = una.sistemareservas.utilidades.SesionGlobal.getFuncionarioActual();
-            List<ReservaDTO> misReservas = reservaLogic.listarPorFuncionario(idFuncionario);
-            ObservableList<ReservaDTO> listaObservable = FXCollections.observableArrayList(misReservas);
-            tabMisReservas.setItems(listaObservable);
-        }
-    }
-
-    private void reservar(){
-        try{
-            String actividad = txtActividad.getText().trim();
-            LocalDate fecha = dtReservarFecha.getValue();
-            String horaInicioStr = cbHoraInicio.getValue();
-            String horaFinalStr = cbHoraFinal.getValue();
-            List<CategoriaRecursoDTO> categoriasSeleccionadas = lvListaCategorias.getSelectionModel().getSelectedItems();
-            if (horaInicioStr == null || horaFinalStr == null) {
-                lblAvisosReservas.setText("Debe seleccionar la hora de inicio y fin.");
-                return;
+    // Se llama cada vez que el usuario entra a la pestaña
+    @Override
+    public void refrescar() {
+        try {
+            List<CategoriaRecursoDTO> seleccionadas = new ArrayList<>(lvListaCategorias.getSelectionModel().getSelectedItems());
+            lvListaCategorias.getItems().setAll(service.listarCategorias());
+            for (CategoriaRecursoDTO categoria : seleccionadas) {
+                lvListaCategorias.getSelectionModel().select(categoria); // Se conserva lo que había escogido
             }
-            // Convertir strings a LocalTime
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-            LocalTime horaInicio = LocalTime.parse(horaInicioStr, formatter);
-            LocalTime horaFinal = LocalTime.parse(horaFinalStr, formatter);
+            actualizarTablaReservas();
+        } catch (Exception e) {
+            lblAvisosReservas.setText(e.getMessage());
+        }
+    }
 
-            String idFuncionario = una.sistemareservas.utilidades.SesionGlobal.getFuncionarioActual();
-            reservaLogic.reservar(idFuncionario, actividad, fecha, horaInicio, horaFinal, categoriasSeleccionadas);
-            mostrarMensaje("Reserva realizada", "Reserva realizada con éxito.");
+    private void actualizarTablaReservas() throws Exception {
+        List<ReservaDTO> misReservas = service.listarReservasPorFuncionario(SesionGlobal.getFuncionarioActual());
+        tabMisReservas.setItems(FXCollections.observableArrayList(misReservas));
+    }
+
+    private void reservar() {
+        String horaInicioStr = cbHoraInicio.getValue();
+        String horaFinalStr = cbHoraFinal.getValue();
+        if (horaInicioStr == null || horaFinalStr == null) {
+            lblAvisosReservas.setText("Debe seleccionar la hora de inicio y fin.");
+            return;
+        }
+        try {
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm");
+            ReservaDTO solicitud = new ReservaDTO(null,
+                    (FuncionarioDTO) SesionGlobal.getUsuario(),
+                    txtActividad.getText().trim(),
+                    dtReservarFecha.getValue(),
+                    LocalTime.parse(horaInicioStr, formato),
+                    LocalTime.parse(horaFinalStr, formato),
+                    new ArrayList<>(lvListaCategorias.getSelectionModel().getSelectedItems()));
+
+            ReservaDTO creada = service.reservar(solicitud);
+
+            String recursos = creada.getRecursos().stream().map(RecursoDTO::getDescripcion).collect(Collectors.joining(", "));
+            Dialogos.informacion("Reserva realizada", "Reserva " + creada.getID() + " realizada con éxito.\nRecursos asignados: " + recursos);
             limpiarFormulario();
             actualizarTablaReservas();
         } catch (Exception ex) {
-            mostrarAlerta(ex.getMessage());
+            Dialogos.advertencia(ex.getMessage());
         }
     }
 
     private void cancelarReserva() {
         ReservaDTO seleccionada = tabMisReservas.getSelectionModel().getSelectedItem();
         if (seleccionada == null) {
-            mostrarAlerta("Debe seleccionar una reserva de la tabla para cancelar.");
+            Dialogos.advertencia("Debe seleccionar una reserva de la tabla para cancelar.");
             return;
         }
-
         try {
-            reservaLogic.cancelar(seleccionada.getID());
-            mostrarMensaje("Reserva cancelada", "La reserva ha sido cancelada.");
+            service.cancelarReserva(seleccionada.getID(), SesionGlobal.getFuncionarioActual());
+            Dialogos.informacion("Reserva cancelada", "La reserva ha sido cancelada.");
             actualizarTablaReservas();
         } catch (Exception ex) {
-            mostrarAlerta(ex.getMessage());
+            Dialogos.advertencia(ex.getMessage());
         }
     }
 
@@ -179,128 +175,59 @@ public class ReservasViewController {
         cbHoraFinal.getSelectionModel().clearSelection();
         lvListaCategorias.getSelectionModel().clearSelection();
         txtPromptFrase.clear();
+        lblAvisosReservas.setText("");
     }
 
     @FXML
     private void imprimirReservas(ActionEvent event) {
-        // 1. Abrir ventana para que el usuario elija dónde guardar
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Guardar Reporte de Mis Reservas");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
-        fileChooser.setInitialFileName("Reporte_Mis_Reservas.pdf");
-
-        File file = fileChooser.showSaveDialog(btnImprimirReservas.getScene().getWindow());
-
-        if (file != null) {
-            try {
-                // 2. Crear el documento en formato horizontal (apaisado)
-                Document documento = new Document(PageSize.A4.rotate());
-                PdfWriter.getInstance(documento, new FileOutputStream(file));
-
-                documento.open();
-                String idFuncionario = una.sistemareservas.utilidades.SesionGlobal.getFuncionarioActual();
-
-                // 3. Título y encabezado del PDF
-                documento.add(new Paragraph("Reporte de Mis Reservas"));
-                // Si implementaste la SesionGlobal, puedes poner el ID aquí:
-                documento.add(new Paragraph("Generado para el Funcionario ID: " + idFuncionario));
-                documento.add(new Paragraph(" ")); // Espacio en blanco
-
-                // 4. Crear tabla de iText con 6 columnas (igual a tu interfaz)
-                PdfPTable tablaPdf = new PdfPTable(6);
-                tablaPdf.setWidthPercentage(100);
-
-                // Configurar el color y texto de las cabeceras
-                String[] encabezados = {"Id", "Actividad", "Fecha", "Horario", "Recursos", "Estado"};
-                for (String encabezado : encabezados) {
-                    PdfPCell celda = new PdfPCell(new Phrase(encabezado));
-                    celda.setBackgroundColor(new com.itextpdf.text.BaseColor(200, 200, 200));
-                    tablaPdf.addCell(celda);
-                }
-
-                // 5. Extraer los datos de tabMisReservas fila por fila
-                for (ReservaDTO reserva : tabMisReservas.getItems()) {
-                    tablaPdf.addCell(reserva.getID());
-                    tablaPdf.addCell(reserva.getActividad());
-                    tablaPdf.addCell(reserva.getFecha().toString());
-                    tablaPdf.addCell(reserva.getHora_init() + " - " + reserva.getHora_final());
-
-                    // Extraemos los IDs de los recursos igual que en el TableColumn
-                    String recursosIds = reserva.getRecursos().stream()
-                            .map(RecursoDTO::getID)
-                            .collect(Collectors.joining(", "));
-
-                    tablaPdf.addCell(recursosIds.isEmpty() ? "Ninguno" : recursosIds);
-                    tablaPdf.addCell(reserva.getEstado().toString());
-                }
-
-                // 6. Añadir tabla y cerrar documento
-                documento.add(tablaPdf);
-                documento.close();
-
-                mostrarMensaje("Éxito", "¡El reporte PDF se ha guardado exitosamente!");
-
-            } catch (Exception e) {
-                mostrarAlerta("Ocurrió un error al generar el PDF: " + e.getMessage());
-            }
+        List<String[]> filas = new ArrayList<>();
+        for (ReservaDTO reserva : tabMisReservas.getItems()) {
+            String recursos = reserva.getRecursos().stream().map(RecursoDTO::getID).collect(Collectors.joining(", "));
+            filas.add(new String[]{reserva.getID(), reserva.getActividad(), reserva.getFecha().toString(),
+                    reserva.getHora_init() + " - " + reserva.getHora_final(),
+                    recursos.isEmpty() ? "Ninguno" : recursos, reserva.getEstado().toString()});
         }
+        ReportePDF.exportarTabla(btnImprimirReservas.getScene().getWindow(), "Reporte_Mis_Reservas.pdf",
+                "Reporte de Mis Reservas",
+                "Generado para: " + SesionGlobal.getNombre() + " (" + SesionGlobal.getFuncionarioActual() + ")",
+                new String[]{"Id", "Actividad", "Fecha", "Horario", "Recursos", "Estado"}, filas);
     }
 
-    private void mostrarAlerta(String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Advertencia");
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
-
-    private void mostrarMensaje(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
+    // =====================================================================
+    //                    Llenar la reserva con IA (Gemini)
+    // =====================================================================
 
     private String construirPromptIA(String promptUsuario) {
         StringBuilder prompt = new StringBuilder();
         prompt.append("Eres un asistente de inteligencia artificial que extrae datos de una reserva de espacios y recursos\n");
-        prompt.append("Para las categoriaRecurso, solo puedes usar los nombres exactos que aparezcan en lalista de categorias disponibles. Jamas inventes nuevas categorias:\n");
-        prompt.append("Lista de categorias disponibles: \n");
-
+        prompt.append("Hoy es ").append(LocalDate.now()).append(".\n");
+        prompt.append("Para las categorias, solo puedes usar los ID numericos que aparecen en la lista de categorias disponibles. Jamas inventes nuevas categorias:\n");
+        prompt.append("Lista de categorias disponibles (ID: descripcion): \n");
         for (CategoriaRecursoDTO categoria : lvListaCategorias.getItems()) {
             prompt.append("- ").append(categoria.getID()).append(": ").append(categoria.getDescripcion()).append("\n");
         }
-
         prompt.append("Prompt usuario: \"").append(promptUsuario).append("\"\n");
         prompt.append("Responde con un JSON con esta forma exacta, sin texto adicional:\n");
-        prompt.append("{\"actividad\": \"\", \"fecha\": \"YYYY-MM-DD\", \"hora_inicio\": \"HH:mm\", \"hora_final\": \"HH:mm\", \"categorias\": [\"ID1\", \"ID2\"]}\n");
+        prompt.append("{\"actividad\": \"\", \"fecha\": \"YYYY-MM-DD\", \"hora_inicio\": \"HH:00\", \"hora_final\": \"HH:00\", \"categorias\": [1, 2]}\n");
         prompt.append("Si algun dato no esta en el prompt, dejalo como cadena vacia o lista vacia");
-
         return prompt.toString();
     }
 
-    // Falta manejar las excepciones
     private void llenarReservaIA(JSONObject datos) {
         try {
             if (datos.has("actividad") && !datos.getString("actividad").isBlank()) {
                 txtActividad.setText(datos.getString("actividad"));
             }
-
             if (datos.has("fecha") && !datos.getString("fecha").isBlank()) {
                 dtReservarFecha.setValue(LocalDate.parse(datos.getString("fecha")));
             }
-
             if (datos.has("hora_inicio") && !datos.getString("hora_inicio").isBlank()) {
                 cbHoraInicio.setValue(datos.getString("hora_inicio"));
             }
-
             if (datos.has("hora_final") && !datos.getString("hora_final").isBlank()) {
                 cbHoraFinal.setValue(datos.getString("hora_final"));
             }
-
             lvListaCategorias.getSelectionModel().clearSelection();
-
             if (datos.has("categorias")) {
                 JSONArray categoriasIA = datos.getJSONArray("categorias");
                 for (int i = 0; i < categoriasIA.length(); i++) {
@@ -312,8 +239,9 @@ public class ReservasViewController {
                     }
                 }
             }
+            lblAvisosReservas.setText("Revise los datos y presione Guardar para reservar.");
         } catch (Exception e) {
-            mostrarAlerta("No se pudo hacer la reserva");
+            Dialogos.advertencia("La IA devolvió datos que no se pudieron usar. Llene la reserva manualmente.");
         }
     }
 
@@ -324,43 +252,45 @@ public class ReservasViewController {
             lblAvisosReservas.setText("Primero tiene que escribir un prompt");
             return;
         }
-
         btnExtraerIA.setDisable(true);
+        String instrucciones = construirPromptIA(prompt);
 
+        // La consulta a Gemini tarda: se hace en otro hilo para no congelar la ventana
         Thread hiloIA = new Thread(() -> {
             try {
-                JSONObject respuesta = consultarIA(prompt);
+                JSONObject respuesta = consultarIA(instrucciones);
                 Platform.runLater(() -> {
                     btnExtraerIA.setDisable(false);
                     llenarReservaIA(respuesta);
                 });
-            } catch (ReservaException e) {
+            } catch (Exception e) {
                 Platform.runLater(() -> {
-                    mostrarAlerta(e.getMessage() + "\n\n" + "Mensaje detallado del error: " + "\n" + e.getCause().getMessage());
                     btnExtraerIA.setDisable(false);
+                    Dialogos.advertencia(e.getMessage());
                 });
             }
         });
+        hiloIA.setDaemon(true);
         hiloIA.start();
     }
 
-    private JSONObject consultarIA(String frase) throws ReservaException {
+    private JSONObject consultarIA(String prompt) throws Exception {
+        GeminiService geminiService;
         try {
             geminiService = new GeminiService();
         } catch (IllegalStateException e) {
-            throw new ReservaException(e.getMessage(), e);
+            throw new Exception(e.getMessage(), e);
         }
-        String prompt = construirPromptIA(frase);
         String respuestaJson;
         try {
             respuestaJson = geminiService.enviarMensaje(prompt);
         } catch (IOException | InterruptedException e) {
-            throw new ReservaException("No se pudo comunicar con el servicio de Gemini", e);
+            throw new Exception("No se pudo comunicar con el servicio de Gemini: " + e.getMessage(), e);
         }
         try {
             return new JSONObject(respuestaJson);
         } catch (JSONException e) {
-            throw new ReservaException("Gemini devolvio un formato incorrecto", e);
+            throw new Exception("Gemini devolvió un formato incorrecto", e);
         }
     }
 }

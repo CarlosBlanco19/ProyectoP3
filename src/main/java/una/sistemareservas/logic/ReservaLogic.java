@@ -1,178 +1,180 @@
 package una.sistemareservas.logic;
 
-import una.sistemareservas.dto.*;
+import una.sistemareservas.datos.CategoriaRecursoDatos;
+import una.sistemareservas.datos.RecursoDatos;
 import una.sistemareservas.datos.ReservaDatos;
-import una.sistemareservas.exception.RecursoException;
+import una.sistemareservas.datos.UsuarioDatos;
+import una.sistemareservas.dto.CategoriaRecursoDTO;
+import una.sistemareservas.dto.EstadoReserva;
+import una.sistemareservas.dto.FuncionarioDTO;
+import una.sistemareservas.dto.RecursoDTO;
+import una.sistemareservas.dto.ReservaDTO;
 import una.sistemareservas.exception.ReservaException;
-import una.sistemareservas.exception.UsuarioException;
-import java.io.IOException;
-import java.time.LocalDate;
+
+import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ReservaLogic {
 
     private final ReservaDatos reservasDatos = new ReservaDatos();
-    private final CategoriaLogic categoriaLogic;
-    private final RecursoLogic recursoLogic;
-    private final UsuarioLogic usuarioLogic;
-    private final List<ReservaDTO> reservas;
+    private final RecursoDatos recursosDatos = new RecursoDatos();
+    private final CategoriaRecursoDatos categoriasDatos = new CategoriaRecursoDatos();
+    private final UsuarioDatos usuarioDatos = new UsuarioDatos();
 
-    public ReservaLogic(CategoriaLogic categoriaLogic, RecursoLogic recursoLogic, UsuarioLogic usuarioLogic) throws ReservaException {
-        this.categoriaLogic = categoriaLogic;
-        this.recursoLogic = recursoLogic;
-        this.usuarioLogic = usuarioLogic;
+    public synchronized ReservaDTO reservar(ReservaDTO solicitud) throws ReservaException {
+        validarSolicitud(solicitud);
+        List<CategoriaRecursoDTO> categorias = sinRepetidas(solicitud.getCategorias());
 
-        List<ReservaDTO> listas;
         try {
-            listas = reservasDatos.serializar(usuarioLogic.listarFuncionarios(), categoriaLogic.listar(), recursoLogic.listar());
-        } catch (IOException e) {
-            throw new ReservaException("No se pudieron cargar las reservas", e);
+            FuncionarioDTO funcionario = usuarioDatos.buscarFuncionario(solicitud.getFuncionario().getID());
+            if (funcionario == null) {
+                throw new ReservaException("El funcionario no está registrado en el sistema");
+            }
+            for (CategoriaRecursoDTO categoria : categorias) {
+                if (categoriasDatos.buscarPorId(categoria.getID()) == null) {
+                    throw new ReservaException("La categoría \"" + categoria.getDescripcion() + "\" ya no existe");
+                }
+            }
+
+            List<RecursoDTO> asignados = new ArrayList<>();
+            List<CategoriaRecursoDTO> sinRecursos = new ArrayList<>();
+            for (CategoriaRecursoDTO categoria : categorias) {
+                RecursoDTO libre = null;
+                for (RecursoDTO recurso : recursosDatos.listarDisponibles(categoria.getID(), solicitud.getFecha(),
+                        solicitud.getHora_init(), solicitud.getHora_final())) {
+                    if (!asignados.contains(recurso)) {
+                        libre = recurso;
+                        break;
+                    }
+                }
+                if (libre == null) {
+                    sinRecursos.add(categoria);
+                } else {
+                    asignados.add(libre);
+                }
+            }
+            if (!sinRecursos.isEmpty()) {
+                String nombres = sinRecursos.stream().map(CategoriaRecursoDTO::getDescripcion)
+                        .collect(Collectors.joining(", "));
+                throw new ReservaException("No hay recursos disponibles en ese horario para: " + nombres, sinRecursos);
+            }
+
+            // 4) Guardar
+            ReservaDTO nueva = new ReservaDTO(generarId(), funcionario, solicitud.getActividad().trim(),
+                    solicitud.getFecha(), solicitud.getHora_init(), solicitud.getHora_final(), categorias);
+            for (RecursoDTO recurso : asignados) {
+                nueva.asignarRecurso(recurso);
+            }
+            reservasDatos.insertar(nueva);
+
+            // Se devuelve tal como quedó en la base de datos
+            return reservasDatos.buscarPorId(nueva.getID());
+        } catch (SQLException e) {
+            throw new ReservaException(ErroresBD.mensaje("guardar la reserva", e), e);
         }
-        reservas = listas;
     }
 
-    public ReservaDTO reservar(String funcionarioId, String actividad, LocalDate fecha, LocalTime hora_init, LocalTime hora_final, List<CategoriaRecursoDTO> categorias) throws UsuarioException, ReservaException, RecursoException {
-        String ID = generarID();
-        FuncionarioDTO funcionario = null;
-        for (FuncionarioDTO f : usuarioLogic.listarFuncionarios()) {
-            if (f.getID().equals(funcionarioId)) {
-                funcionario = f;
-                break;
-            }
+    public synchronized void cancelar(String idReserva, String idFuncionario) throws ReservaException {
+        if (idReserva == null || idReserva.isBlank()) {
+            throw new ReservaException("Debe seleccionar una reserva");
         }
-        if (funcionario == null) {
-            throw new UsuarioException("El funcionario no esta registrado en el sistema");
-        }
-
-        if (actividad == null || actividad.isBlank()) {
-            throw new ReservaException("La actividad esta vacia");
-        }
-        if (fecha == null || hora_init == null || hora_final == null) {
-            throw new ReservaException("Fecha, hora de inicio y la hora final son obligatorias");
-        }
-        if (!hora_final.isAfter(hora_init)) {
-            throw new ReservaException("La hora de final debe ser posterior a la hora de inicio");
-        }
-        if (categorias == null || categorias.isEmpty()) {
-            throw new ReservaException("Debe enviar al menos una categoria de recurso");
-        }
-
-        for (CategoriaRecursoDTO categoria : categorias) {
-            if (categoria == null || categoriaLogic.buscarID(categoria.getID()) == null) {
-                throw new RecursoException("Alguna de las categorias solicitadas no existe");
-            }
-        }
-
-        List<CategoriaRecursoDTO> categoriasNoDispo = new ArrayList<>();
-        List<RecursoDTO> recursosAsignados = new ArrayList<>();
-
-        for (CategoriaRecursoDTO categoria : categorias) {
-            RecursoDTO disponible = buscarDisponible(categoria, fecha, hora_init, hora_final, recursosAsignados);
-            if (disponible == null) {
-                categoriasNoDispo.add(categoria);
-            } else {
-                recursosAsignados.add(disponible);
-            }
-        }
-
-        if (!categoriasNoDispo.isEmpty()) {
-            throw new ReservaException("No hay recursos disponibles para una o varias de las categorias solicitadas", categoriasNoDispo);
-        }
-
-        ReservaDTO nuevaReserva = new ReservaDTO(ID, funcionario, actividad, fecha, hora_init, hora_final, categorias);
-        for (RecursoDTO recurso : recursosAsignados) {
-            nuevaReserva.asignarRecurso(recurso);
-        }
-
-        reservas.add(nuevaReserva);
-        guardar();
-        return nuevaReserva;
-    }
-
-    private RecursoDTO buscarDisponible(CategoriaRecursoDTO categoria, LocalDate fecha, LocalTime hora_init, LocalTime hora_final, List<RecursoDTO> yaAsignadosEnEstaReserva) {
-        for (RecursoDTO recurso : recursoLogic.listarCategoria(categoria.getID())) {
-            if (yaAsignadosEnEstaReserva.contains(recurso)) {
-                continue;
-            } else if (!ocupado(recurso, fecha, hora_init, hora_final)) {
-                return recurso;
-            }
-        }
-        return null;
-    }
-
-    private boolean ocupado(RecursoDTO recurso, LocalDate fecha, LocalTime hora_init, LocalTime hora_final) {
-        for (ReservaDTO reserva : reservas) {
-            if (reserva.getEstado() != EstadoReserva.ACTIVA | !reserva.getFecha().equals(fecha) | !reserva.getRecursos().contains(recurso)) {
-                continue;
-            }
-            if (hora_init.isBefore(reserva.getHora_final()) && reserva.getHora_init().isBefore(hora_final)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void guardar() throws ReservaException {
         try {
-            reservasDatos.deserializar(reservas);
-        } catch (IOException e) {
-            throw new ReservaException("No se pudo guardar la reserva en el archivo", e);
+            ReservaDTO reserva = reservasDatos.buscarPorId(idReserva);
+            if (reserva == null) {
+                throw new ReservaException("No existe una reserva con el ID: " + idReserva);
+            }
+            if (idFuncionario == null || !reserva.getFuncionario().getID().equals(idFuncionario)) {
+                throw new ReservaException("Solo puede cancelar sus propias reservas");
+            }
+            if (reserva.getEstado() == EstadoReserva.CANCELADA) {
+                throw new ReservaException("La reserva ya estaba cancelada");
+            }
+            LocalDateTime inicio = LocalDateTime.of(reserva.getFecha(), reserva.getHora_init());
+            if (!inicio.isAfter(LocalDateTime.now())) {
+                throw new ReservaException("Solo se pueden cancelar reservas que todavía no han comenzado");
+            }
+            reservasDatos.cancelar(idReserva);
+        } catch (SQLException e) {
+            throw new ReservaException(ErroresBD.mensaje("cancelar la reserva", e), e);
         }
     }
 
-    private String generarID() {
-        int maximo = 0;
-        for (ReservaDTO reserva : reservas) {
-            String numeroTexto = reserva.getID().substring(4);
-            int numero = Integer.parseInt(numeroTexto);
-            if (numero > maximo) {
-                maximo = numero;
+    public List<ReservaDTO> listar() throws ReservaException {
+        try {
+            return reservasDatos.listar();
+        } catch (SQLException e) {
+            throw new ReservaException(ErroresBD.mensaje("cargar las reservas", e), e);
+        }
+    }
+
+    public List<ReservaDTO> listarPorFuncionario(String idFuncionario) throws ReservaException {
+        try {
+            return reservasDatos.listarPorFuncionario(idFuncionario);
+        } catch (SQLException e) {
+            throw new ReservaException(ErroresBD.mensaje("cargar las reservas", e), e);
+        }
+    }
+
+    // Validaciones que no necesitan la base de datos
+    void validarSolicitud(ReservaDTO solicitud) throws ReservaException {
+        if (solicitud == null) {
+            throw new ReservaException("No se recibió la reserva");
+        }
+        if (solicitud.getFuncionario() == null || solicitud.getFuncionario().getID() == null) {
+            throw new ReservaException("Debe haber un funcionario con sesión iniciada para reservar");
+        }
+        if (solicitud.getActividad() == null || solicitud.getActividad().isBlank()) {
+            throw new ReservaException("Debe escribir la actividad");
+        }
+        if (solicitud.getActividad().trim().length() > 100) {
+            throw new ReservaException("La actividad no puede tener más de 100 caracteres");
+        }
+        if (solicitud.getFecha() == null) {
+            throw new ReservaException("Debe seleccionar la fecha");
+        }
+        if (solicitud.getHora_init() == null || solicitud.getHora_final() == null) {
+            throw new ReservaException("Debe seleccionar la hora de inicio y la hora final");
+        }
+        if (!solicitud.getHora_final().isAfter(solicitud.getHora_init())) {
+            throw new ReservaException("La hora final debe ser posterior a la hora de inicio");
+        }
+        if (LocalDateTime.of(solicitud.getFecha(), solicitud.getHora_init()).isBefore(LocalDateTime.now())) {
+            throw new ReservaException("No se pueden hacer reservas en fechas u horas que ya pasaron");
+        }
+        if (solicitud.getCategorias() == null || solicitud.getCategorias().isEmpty()) {
+            throw new ReservaException("Debe seleccionar al menos una categoría de recurso");
+        }
+        for (CategoriaRecursoDTO categoria : solicitud.getCategorias()) {
+            if (categoria == null) {
+                throw new ReservaException("Alguna de las categorías solicitadas no es válida");
             }
         }
-        int siguiente = maximo + 1;
-        return String.format("RES-%06d", siguiente);
     }
 
-    public List<ReservaDTO> listarPorFuncionario(String funcionarioId) {
-        List<ReservaDTO> resultado = new ArrayList<>();
-        for (ReservaDTO reserva : reservas) {
-            if (reserva.getFuncionario() != null && reserva.getFuncionario().getID().equals(funcionarioId)) {
-                resultado.add(reserva);
+    private List<CategoriaRecursoDTO> sinRepetidas(List<CategoriaRecursoDTO> categorias) {
+        Map<Integer, CategoriaRecursoDTO> unicas = new LinkedHashMap<>();
+        for (CategoriaRecursoDTO categoria : categorias) {
+            unicas.putIfAbsent(categoria.getID(), categoria);
+        }
+        return new ArrayList<>(unicas.values());
+    }
+
+    // RES-000001, RES-000002, ...
+    private String generarId() throws SQLException {
+        String ultimo = reservasDatos.ultimoId();
+        int numero = 0;
+        if (ultimo != null) {
+            try {
+                numero = Integer.parseInt(ultimo.substring(4));
+            } catch (NumberFormatException e) {
+                numero = 0;
             }
         }
-        return resultado;
-    }
-
-    public ReservaDTO buscarPorID(String id) {
-        for (ReservaDTO reserva : reservas) {
-            if (reserva.getID().equals(id)) {
-                return reserva;
-            }
-        }
-        return null;
-    }
-
-    public List<ReservaDTO> getReservas() {
-        return reservas;
-    }
-
-    public void cancelar(String idReserva) throws ReservaException {
-        ReservaDTO reserva = buscarPorID(idReserva);
-        if (reserva == null) {
-            throw new ReservaException("No existe una reserva con el ID: " + idReserva);
-        }
-        if (reserva.getEstado() == EstadoReserva.CANCELADA) {
-            throw new ReservaException("La reserva ya estaba cancelada");
-        }
-        LocalDateTime inicioReserva = LocalDateTime.of(reserva.getFecha(), reserva.getHora_init());
-        if (!inicioReserva.isAfter(LocalDateTime.now())) {
-            throw new ReservaException("Solo se pueden cancelar reservas posteriores a la fecha actual");
-        }
-
-        reserva.cambiarEstado();
-        guardar();
+        return String.format("RES-%06d", numero + 1);
     }
 }

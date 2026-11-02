@@ -1,14 +1,18 @@
 package una.sistemareservas.dto;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
-// El formato principal de la reserva, podrian añadirse mas cosas despues
-// Contiene toda la informacion de la reserva, el funcionario que hizo la reserva, la descripcion de la reserva, fecha y horas
-public class ReservaDTO {
+// Toda la información de una reserva: quién la hizo, la actividad, fecha, horas,
+// las categorías que pidió y los recursos que el sistema le asignó.
+public class ReservaDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String ID;
     private FuncionarioDTO funcionario;
     private String actividad;
@@ -16,27 +20,35 @@ public class ReservaDTO {
     private LocalDate fecha;
     private LocalTime hora_init;
     private LocalTime hora_final;
-    private List<CategoriaRecursoDTO> categorias = new ArrayList<>(); // La lista de las categorias requeridas
-    private List<RecursoDTO> recursos = new ArrayList<>(); // Lista de los recursos disponibles que pedian las categorias
+    private List<CategoriaRecursoDTO> categorias = new ArrayList<>(); // Categorías pedidas
+    private List<RecursoDTO> recursos = new ArrayList<>();            // Recursos asignados
 
-    // Constructor
-    public ReservaDTO(String ID, FuncionarioDTO funcionario, String actividad, LocalDate fecha, LocalTime hora_init, LocalTime hora_final, List<CategoriaRecursoDTO> categorias) {
+    public ReservaDTO(String ID, FuncionarioDTO funcionario, String actividad, LocalDate fecha,
+                      LocalTime hora_init, LocalTime hora_final, List<CategoriaRecursoDTO> categorias) {
         this.ID = ID;
         this.funcionario = funcionario;
         this.actividad = actividad;
         this.fecha = fecha;
         this.hora_init = hora_init;
         this.hora_final = hora_final;
-        this.categorias = new ArrayList<>(categorias);
+        if (categorias != null) {
+            this.categorias = new ArrayList<>(categorias);
+        }
         this.estado = EstadoReserva.ACTIVA;
     }
 
     // GETS
+    public String getID() {
+        return ID;
+    }
     public FuncionarioDTO getFuncionario() {
         return funcionario;
     }
     public String getActividad() {
         return actividad;
+    }
+    public EstadoReserva getEstado() {
+        return estado;
     }
     public LocalDate getFecha() {
         return fecha;
@@ -47,16 +59,9 @@ public class ReservaDTO {
     public LocalTime getHora_final() {
         return hora_final;
     }
-    public String getID() {
-        return ID;
-    }
-    public EstadoReserva getEstado() {
-        return estado;
-    }
     public List<CategoriaRecursoDTO> getCategorias() {
         return Collections.unmodifiableList(categorias);
     }
-
     public List<RecursoDTO> getRecursos() {
         return Collections.unmodifiableList(recursos);
     }
@@ -71,6 +76,9 @@ public class ReservaDTO {
     public void setActividad(String actividad) {
         this.actividad = actividad;
     }
+    public void setEstado(EstadoReserva estado) {
+        this.estado = estado;
+    }
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
@@ -81,14 +89,21 @@ public class ReservaDTO {
         this.hora_final = hora_final;
     }
 
-    // Metodos
+    // Métodos
     public void asignarRecurso(RecursoDTO recurso) {
-        recursos.add(recurso); // Añade un recurso a la lista de recursos
+        recursos.add(recurso);
     }
-    public void cambiarEstado() {
-        this.estado = EstadoReserva.CANCELADA;
-        this.recursos.clear();
-    } // Tengo que revisar si tener estos metodos aqui se puede, o mejor se mete a logica
 
-    // TODO: Cambiarlo por set y get
+    // Dos reservas son iguales si tienen el mismo ID
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ReservaDTO otra)) return false;
+        return Objects.equals(ID, otra.ID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(ID);
+    }
 }

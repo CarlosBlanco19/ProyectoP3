@@ -4,9 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+        Un solo proyecto con DOS programas independientes:
+          - Backend:  una.sistemareservas.servidor.ServidorApp   (mvn compile exec:java)
+          - Frontend: una.sistemareservas.Lanzador / App          (mvn javafx:run)
+    -->
     <groupId>una.sistemareservas</groupId>
     <artifactId>ProyectoP3</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2.0</version>
 
     <properties>
         <maven.compiler.source>26</maven.compiler.source>
@@ -16,77 +21,77 @@
     </properties>
 
     <dependencies>
-
+        <!-- Frontend: interfaz -->
         <dependency>
             <groupId>org.openjfx</groupId>
-
             <artifactId>javafx-controls</artifactId>
-
             <version>${javafx.version}</version>
         </dependency>
-
-
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
         </dependency>
 
+        <!-- Frontend: respuesta de Gemini (IA) -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20240303</version>
         </dependency>
 
+        <!-- Frontend: reportes PDF -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
             <version>5.5.13.3</version>
         </dependency>
 
-        <dependency>
-
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>6.1.0</version>
-            <scope>test</scope>
-
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>6.1.0</version>
-            <scope>test</scope>
-        </dependency>
-
-
+        <!-- Backend: conexión a MySQL -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>8.4.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>6.1.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- mvn javafx:run  -> abre el Frontend -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
-
                 <configuration>
                     <mainClass>una.sistemareservas.App</mainClass>
                 </configuration>
             </plugin>
 
+            <!-- mvn compile exec:java  -> arranca el Backend -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <mainClass>una.sistemareservas.servidor.ServidorApp</mainClass>
+                </configuration>
+            </plugin>
+
+            <!-- Pruebas de UNIDAD: clases *Test (mvn test). No necesitan MySQL. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
 
+            <!-- Pruebas de INTEGRACIÓN: clases *IT (mvn verify). Necesitan MySQL con los scripts corridos. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -100,10 +105,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
-
-
-
 </project>

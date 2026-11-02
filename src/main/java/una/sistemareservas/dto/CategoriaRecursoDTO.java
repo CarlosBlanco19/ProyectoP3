@@ -1,11 +1,15 @@
 package una.sistemareservas.dto;
 
-public class CategoriaRecursoDTO {
+import java.io.Serializable;
+
+// Categoría de recurso (Laptop, Proyector, ...). El ID lo genera la base de datos (AUTO_INCREMENT).
+public class CategoriaRecursoDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int ID;
     private String Descripcion;
-    // Cada categoria de recurso tiene minimo un id y una descripcion (Tal vez se pueda añadir algo mas despues)
 
-    public CategoriaRecursoDTO(int ID, String Descripcion) { // Constructor
+    public CategoriaRecursoDTO(int ID, String Descripcion) {
         this.ID = ID;
         this.Descripcion = Descripcion;
     }
@@ -26,8 +30,22 @@ public class CategoriaRecursoDTO {
         this.Descripcion = Descripcion;
     }
 
+    // Dos categorías son iguales si tienen el mismo ID
+    // (necesario porque cada respuesta del servidor trae objetos nuevos)
     @Override
-    public String toString(){
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CategoriaRecursoDTO otra)) return false;
+        return ID == otra.ID;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(ID);
+    }
+
+    @Override
+    public String toString() {
         return Descripcion;
     }
 }

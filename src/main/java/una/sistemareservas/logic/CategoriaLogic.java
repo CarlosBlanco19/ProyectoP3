@@ -3,95 +3,94 @@ package una.sistemareservas.logic;
 import una.sistemareservas.datos.CategoriaRecursoDatos;
 import una.sistemareservas.dto.CategoriaRecursoDTO;
 import una.sistemareservas.exception.CategoriaException;
-import una.sistemareservas.utilidades.Busqueda;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.io.IOException;
 
+// Mantenimiento de categorías de recursos (solo el administrador)
 public class CategoriaLogic {
-
 
     private final CategoriaRecursoDatos categoriasDatos = new CategoriaRecursoDatos();
 
-
-    // id autogenerado y se le asigna a la categoria que llega por parametro
-    public void agregar(CategoriaRecursoDTO categoria) throws CategoriaException {
-        if (categoria == null || categoria.getDescripcion() == null || categoria.getDescripcion().isBlank()) {
-            throw new CategoriaException("La descripción es obligatoria");
-        }
-
+    public List<CategoriaRecursoDTO> listar() throws CategoriaException {
         try {
-            int idGenerado = categoriasDatos.insertar(categoria.getDescripcion().trim());
-            categoria.setID(idGenerado);
+            return categoriasDatos.listar();
         } catch (SQLException e) {
-            throw new CategoriaException("No se pudo guardar la categoría");
+            throw new CategoriaException(ErroresBD.mensaje("cargar las categorías", e), e);
         }
     }
 
-    public void actualizar(int id, String desc) throws CategoriaException {
-        if (buscarID(id) == null) {
-            throw new CategoriaException("La categoría no existe");
-        }
-        if (desc == null || desc.isBlank()) {
-            throw new CategoriaException("La descripción es obligatoria");
-        }
-
+    public CategoriaRecursoDTO buscarPorId(int id) throws CategoriaException {
         try {
-            categoriasDatos.actualizar(id, desc.trim());
+            return categoriasDatos.buscarPorId(id);
         } catch (SQLException e) {
-            throw new CategoriaException("No se pudo actualizar la categoría");
+            throw new CategoriaException(ErroresBD.mensaje("buscar la categoría", e), e);
+        }
+    }
+
+    public List<CategoriaRecursoDTO> buscarPorDescripcion(String texto) throws CategoriaException {
+        if (texto == null || texto.isBlank()) {
+            return listar();
+        }
+        try {
+            return categoriasDatos.buscarPorDescripcion(texto.trim());
+        } catch (SQLException e) {
+            throw new CategoriaException(ErroresBD.mensaje("buscar categorías", e), e);
+        }
+    }
+
+    // El ID lo genera la base de datos; se devuelve la categoría ya con su ID
+    public CategoriaRecursoDTO agregar(String descripcion) throws CategoriaException {
+        String limpia = validarDescripcion(descripcion);
+        try {
+            if (categoriasDatos.existeDescripcion(limpia, 0)) {
+                throw new CategoriaException("Ya existe una categoría llamada \"" + limpia + "\"");
+            }
+            int id = categoriasDatos.insertar(limpia);
+            return new CategoriaRecursoDTO(id, limpia);
+        } catch (SQLException e) {
+            throw new CategoriaException(ErroresBD.mensaje("guardar la categoría", e), e);
+        }
+    }
+
+    public void actualizar(int id, String descripcion) throws CategoriaException {
+        String limpia = validarDescripcion(descripcion);
+        try {
+            if (categoriasDatos.buscarPorId(id) == null) {
+                throw new CategoriaException("La categoría no existe");
+            }
+            if (categoriasDatos.existeDescripcion(limpia, id)) {
+                throw new CategoriaException("Ya existe otra categoría llamada \"" + limpia + "\"");
+            }
+            categoriasDatos.actualizar(id, limpia);
+        } catch (SQLException e) {
+            throw new CategoriaException(ErroresBD.mensaje("actualizar la categoría", e), e);
         }
     }
 
     public void eliminar(int id) throws CategoriaException {
-        if (buscarID(id) == null) {
-            throw new CategoriaException("La categoría no existe");
-        }
-
         try {
+            if (categoriasDatos.buscarPorId(id) == null) {
+                throw new CategoriaException("La categoría no existe");
+            }
             categoriasDatos.eliminar(id);
         } catch (SQLException e) {
-            // este error significa que la categ es usada por otra tabla
-            if (e.getErrorCode() == 1451) {
+            if (ErroresBD.esLlaveForanea(e)) {
                 throw new CategoriaException("No se puede eliminar la categoría porque tiene recursos o reservas asociados");
             }
-            throw new CategoriaException("No se pudo eliminar la categoría");
+            throw new CategoriaException(ErroresBD.mensaje("eliminar la categoría", e), e);
         }
     }
 
-    public List<CategoriaRecursoDTO> listar() {
-        try {
-            return categoriasDatos.listar();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+    // Validación que no necesita la base de datos
+    String validarDescripcion(String descripcion) throws CategoriaException {
+        if (descripcion == null || descripcion.isBlank()) {
+            throw new CategoriaException("La descripción es obligatoria");
         }
-    }
-
-    public CategoriaRecursoDTO buscarID(int id) {
-        for (CategoriaRecursoDTO categoria : listar()) {
-            if (categoria.getID() == id) {
-                return categoria;
-            }
+        String limpia = descripcion.trim();
+        if (limpia.length() > 150) {
+            throw new CategoriaException("La descripción no puede tener más de 150 caracteres");
         }
-        return null;
-    }
-
-    public List<CategoriaRecursoDTO> buscarDescripcion(String desc) {
-        List<CategoriaRecursoDTO> res = new ArrayList<>();
-
-        if (desc == null || desc.isBlank()) {
-            return res; // vacio
-        }
-
-        String busqueda = desc.toLowerCase();
-        for (CategoriaRecursoDTO categoria : listar()) {
-            if (categoria.getDescripcion().toLowerCase().contains(busqueda)) {
-                res.add(categoria);
-            }
-        }
-        return res;
+        return limpia;
     }
 }

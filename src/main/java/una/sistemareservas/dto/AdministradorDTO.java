@@ -1,10 +1,10 @@
 package una.sistemareservas.dto;
 
+// Usuario ADMINISTRADOR: solo tiene ID, clave y rol
 public class AdministradorDTO extends UsuarioDTO {
-    // Usuario ADMINISTRADOR, simplemente hereda
+    private static final long serialVersionUID = 1L;
 
-    public AdministradorDTO(String ID, String Clave) { // Constructor que llama al constructor de Usuario con el rol Administrador
+    public AdministradorDTO(String ID, String Clave) {
         super(ID, Clave, Rol.ADMINISTRADOR);
     }
-
 }
